@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.9",
+    "body-parser": "^2.2.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  },
+  "name": "gitgyud-sparkfest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeanTheBuilder1/gitgyud-sparkfest.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SeanTheBuilder1/gitgyud-sparkfest/issues"
+  },
+  "homepage": "https://github.com/SeanTheBuilder1/gitgyud-sparkfest#readme"
+}

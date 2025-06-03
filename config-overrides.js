@@ -8,6 +8,7 @@ module.exports = function override(config) {
     crypto: require.resolve('crypto-browserify'),
     stream: require.resolve('stream-browserify'),
     vm: require.resolve('vm-browserify'),
+    process: require.resolve('process/browser'),
   };
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
@@ -22,5 +23,11 @@ module.exports = function override(config) {
   // }, {});
   // config.plugins = config.plugins.concat([
   //   new webpack.DefinePlugin(envKeys)])
+  config.module.rules.unshift({
+    test: /\.m?js$/,
+    resolve: {
+      fullySpecified: false, // disable the behavior
+    },
+  });
   return config;
 };

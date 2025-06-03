@@ -1,6 +1,6 @@
 # QSee - Complaints, Requests, Volunteering
 
-## 📌 Project Overview
+## Project Overview
 
 QSee is a web-based platform designed to bridge the communication gap between QCitizens and the Quezon City Local Government Unit (LGU). It serves as a centralized and transparent medium for reporting civic issues such as poor infrastructure, unorganized commute routes, public health concerns, safety issues, and corruption.
 
@@ -8,7 +8,7 @@ Through QSee, verified citizens can post, comment, and track local concerns in a
 
 ---
 
-## 👥 Group Members
+## Group Members
 
 - John Gavin Deposoy  
 - Sean Patrick P. Rada  
@@ -17,7 +17,7 @@ Through QSee, verified citizens can post, comment, and track local concerns in a
 
 ---
 
-## 🎯 Objectives
+## Objectives
 
 - Provide a **centralized platform** for QCitizens to report civic problems.
 - Promote **government transparency** and faster response to public concerns.
@@ -27,7 +27,7 @@ Through QSee, verified citizens can post, comment, and track local concerns in a
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 ### Front-end
 - **React.js** – Web application UI framework
@@ -48,15 +48,15 @@ Through QSee, verified citizens can post, comment, and track local concerns in a
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-- 🧑‍💼 **Verified Citizen Log-in** – Secure sign-in using mobile numbers linked to valid IDs  
-- 📢 **Public Complaint Posting** – Citizens can post and comment on various local concerns  
-- 🧭 **Interactive District/Barangay Map** – Easily see reports by location  
-- 🛡️ **reCAPTCHA Integration** – Protect against spam and bot activities  
-- 🤖 **AI-Powered Admin Dashboard** – Smart summaries of reports using Gemini  
-- 🤝 **Volunteer System** – Users can sign up to help with specific local projects  
-- 📱 **Responsive Design** – Fully accessible on both desktop and mobile devices
+- **Verified Citizen Log-in** – Secure sign-in using mobile numbers linked to valid IDs  
+- **Public Complaint Posting** – Citizens can post and comment on various local concerns  
+- **Interactive District/Barangay Map** – Easily see reports by location  
+- **reCAPTCHA Integration** – Protect against spam and bot activities  
+- **AI-Powered Admin Dashboard** – Smart summaries of reports using Gemini  
+- **Volunteer System** – Users can sign up to help with specific local projects  
+- **Responsive Design** – Fully accessible on both desktop and mobile devices
 
 ---
 

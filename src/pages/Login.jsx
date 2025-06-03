@@ -1,11 +1,13 @@
 import "../App.css";
 import supabase from "../supabase-client";
 import { useRef, useState, createRef } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import ReCAPTCHA from "react-google-recaptcha";
 const recaptchaRef = createRef();
 
-function Login() {
+function Login({ setToken }) {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
@@ -26,6 +28,8 @@ function Login() {
             });
             if (error) throw error;
             console.log(data);
+            setToken(data);
+            navigate("/homepage");
         } catch (error) {
             alert(error);
         }

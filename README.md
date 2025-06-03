@@ -46,7 +46,6 @@ Through QSee, verified citizens can post, comment, and track local concerns in a
 ### Front-end  
 - **React.js** – Web application UI framework  
 - **Tailwind CSS** – Utility-first CSS for styling  
-- **ShadCN** – UI component library for React  
 
 ### Back-end  
 - **Node.js** – Server-side logic  
@@ -59,6 +58,7 @@ Through QSee, verified citizens can post, comment, and track local concerns in a
 
 ### UI/UX Tools  
 - **Figma** – Wireframing and prototyping  
+- **ShadCN** – UI component library for React  
 
 ---
 

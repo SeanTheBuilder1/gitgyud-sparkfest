@@ -85,11 +85,11 @@ git clone https://github.com/SeanTheBuilder1/gitgyud-sparkfest.git
 cd gitgyud-sparkfest
 ```
 
-2. **Install dependencies
+2. **Install dependencies**
 ```bash
 npm install
 ```
-3. **Create .env file in root directory
+3. **Create .env file in root directory**
 ```bash
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -97,7 +97,7 @@ GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 GEMINI_API_KEY=your_gemini_api_key
 ```
-4. **Run the app
+4. **Run the app**
 ```bash
 npm run dev
 ```

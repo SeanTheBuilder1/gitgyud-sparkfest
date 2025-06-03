@@ -31,13 +31,13 @@ Through QSee, verified citizens can post, comment, and track local concerns in a
 
 ## 🌟 Key Features
 
-- 🧑‍💼 **Verified Citizen Log-in** – Secure sign-in using mobile numbers linked to valid IDs  
-- 📢 **Public Complaint Posting** – Citizens can post and comment on local issues  
-- 🧭 **Interactive District/Barangay Map** – View reports by geolocation  
-- 🛡️ **reCAPTCHA Integration** – Protection against bots and spam  
-- 🤖 **AI-Powered Admin Dashboard** – Summarized insights via Gemini AI  
-- 🤝 **Volunteer System** – Citizens can join local initiatives  
-- 📱 **Responsive Design** – Accessible across desktop and mobile devices  
+- **Verified Citizen Log-in** – Secure sign-in using mobile numbers linked to valid IDs  
+- **Public Complaint Posting** – Citizens can post and comment on local issues  
+- **Interactive District/Barangay Map** – View reports by geolocation  
+- **reCAPTCHA Integration** – Protection against bots and spam  
+- **AI-Powered Admin Dashboard** – Summarized insights via Gemini AI  
+- **Volunteer System** – Citizens can join local initiatives  
+- **Responsive Design** – Accessible across desktop and mobile devices  
 
 ---
 

@@ -1,10 +1,11 @@
-import './App.css';
-import supabase from './supabase-client';
+import '../App.css';
+import supabase from '../supabase-client';
 import { useRef, useState, createRef } from 'react'
+import {Link} from 'react-router'
 import ReCAPTCHA from 'react-google-recaptcha'
 const recaptchaRef = createRef();
 
-function App() {
+function Register() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
@@ -16,18 +17,29 @@ function App() {
 
     // apply to form data
   }
- async function formSubmit() {
-    const {data, error} = await supabase.auth.signInWithPassword({
-        email: {email},
-        password: {password},
-    })
-    if(error){
-        alert(error)
+ async function formSubmit(e) {
+    e.preventDefault()
+    try {   
+      const {data, error} = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            username: name
+          },
+        },
+      })
+      if(error) throw error
+      console.log(data)
+      alert("Check your email address")
+    } 
+    catch (error) {
+      alert(error)
     }
   }
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Register</h1>
       <form onSubmit={formSubmit}>
         <input
           name="Email"
@@ -60,8 +72,9 @@ function App() {
           sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
         />
       </form>
+      <Link to='/login'>Login</Link>
     </div>
   );
 }
 
-export default App;
+export default Register;

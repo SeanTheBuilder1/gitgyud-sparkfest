@@ -1,16 +1,16 @@
-import './App.css';
-import {Register, Login} from './pages'
-import {Routes, Route} from 'react-router-dom'
+import "./App.css";
+import { Register, Login } from "./pages";
+import { Routes, Route } from "react-router-dom";
 
-const App = ()=>{
+const App = () => {
     return (
         <div>
             <Routes>
-                <Route path={"/"} element={<Register/>}/>
-                <Route path={"/login"} element={<Login/>}/>
+                <Route path={"/"} element={<Register />} />
+                <Route path={"/login"} element={<Login />} />
             </Routes>
         </div>
-    )
-}
+    );
+};
 
 export default App;

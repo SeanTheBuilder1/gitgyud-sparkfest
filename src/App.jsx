@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import { Register, Login, Homepage, IssueCreate } from "./pages";
+import { Register, Login, Home, IssueCreate } from "./pages";
 import { Routes, Route } from "react-router-dom";
 
 const App = () => {
@@ -18,9 +18,9 @@ const App = () => {
     return (
         <div>
             <Routes>
-                <Route path={"/"} element={<Register />} />
+                <Route path={"/register"} element={<Register />} />
                 <Route path={"/login"} element={<Login setToken={setToken} />} />
-                {token ? <Route path={"/homepage"} element={<Homepage token={token} />} /> : ""}
+                {token ? <Route path={"/"} element={<Home token={token} />} /> : ""}
                 {token ? <Route path={"/issue-create"} element={<IssueCreate token={token} />} /> : ""}
             </Routes>
         </div>

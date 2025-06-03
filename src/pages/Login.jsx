@@ -59,11 +59,7 @@ function Login() {
                     onChange={(event) => setPassword(event.target.value)}
                 />
                 <button type="submit">Login</button>
-                <ReCAPTCHA
-                    ref={recaptchaRef}
-                    size="invisible"
-                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                />
+                <ReCAPTCHA ref={recaptchaRef} size="invisible" sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
             </form>
             <Link to="/">Register</Link>
         </div>

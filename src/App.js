@@ -1,33 +1,64 @@
 import './App.css';
 import supabase from './supabase-client';
-import { useRef, useState } from 'react'
+import { useRef, useState, createRef } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
+const recaptchaRef = createRef();
 
 function App() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
+  const [password, setPassword] = useState('')
+
+  const recaptchaRef = useRef();
+
+  const onSubmitWithReCAPTCHA = async () => {
+    const token = await recaptchaRef.current.executeAsync();
+
+    // apply to form data
+  }
+ async function formSubmit() {
+    const {data, error} = await supabase.auth.signInWithPassword({
+        email: {email},
+        password: {password},
+    })
+    if(error){
+        alert(error)
+    }
+  }
   return (
     <div>
-      <h1>Sign up for Newsletter</h1>
-      <form>
+      <h1>Login</h1>
+      <form onSubmit={formSubmit}>
         <input
           name="Email"
           type={'email'}
           value={email}
           required
-          placeholder="joe@example.com"
+          placeholder="Email"
           onChange={(event) => setEmail(event.target.value)}
         />
         <input
-          name="Name"
+          name="Username"
           type={'name'}
           value={name}
           required
-          placeholder="Joe"
+          placeholder="Username"
           onChange={(event) => setName(event.target.value)}
         />
-        <button type="submit">Sign up</button>
-        <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
+        <input
+          name="Password"
+          type={'password'}
+          value={password}
+          required
+          placeholder="Password"
+          onChange={(event) => setPassword(event.target.value)}
+        />
+        <button type="submit">Login</button>
+          <ReCAPTCHA
+          ref={recaptchaRef}
+          size="invisible"
+          sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+        />
       </form>
     </div>
   );

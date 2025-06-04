@@ -30,7 +30,7 @@ function Preview({ token }) {
     const [data, setData] = useState();
     const table = [];
     async function getIssues() {
-        const { data, error } = await supabase.from("issues").select("*").eq("issue_state", "open");
+        const { data, error } = await supabase.from("issues").select("*, users(username)").eq("issue_state", "open");
         if (error) {
         } else {
             return data;

@@ -1,12 +1,22 @@
 import { createRef } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import supabase from "../supabase-client";
 // import "../styles/Home.css"; // We'll define styles separately
 import "../App.css"; // ala pa images bruh
 const recaptchaRef = createRef();
 
 function Home({ token }) {
-    function handleLogout() {
+    const navigate = useNavigate();
+    async function handleLogout() {
         sessionStorage.removeItem("token");
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            alert(error);
+            console.log(error);
+        } else {
+            alert("Logged out\n");
+            navigate("/");
+        }
     }
     // <img src="../images/qc-logo.png" alt="QC Logo" className="qc-logo" />
     // <img src="../images/qsee-logo.png" alt="QSee Logo" className="qsee-logo" />
@@ -15,12 +25,22 @@ function Home({ token }) {
             <div className="home-card">
                 <p className="tagline">Complaints. Requests. Volunteering.</p>
                 <div className="button-group">
-                    <Link to="/login" className="home-button">
-                        Log In
-                    </Link>
-                    <Link to="/signup" className="home-button">
-                        Sign Up
-                    </Link>
+                    {() => {
+                        if (token) {
+                            return (
+                                <div>
+                                    <Link to="/login" className="home-button">
+                                        Log In
+                                    </Link>
+                                    <Link to="/signup" className="home-button">
+                                        Sign Up
+                                    </Link>
+                                </div>
+                            );
+                        } else {
+                            return "";
+                        }
+                    }}
                 </div>
             </div>
             <div>

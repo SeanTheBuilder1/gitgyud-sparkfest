@@ -20,6 +20,30 @@ const category_lookup = [
     { id: 11, name: "Others" },
 ];
 
+function TableRow(item) {
+    if (item?.users?.username) {
+        return (
+            <tr>
+                <td>{item.issue_subject}</td>
+                <td>{item.issue_body}</td>
+                <td>{item.users.username}</td>
+                <td>{item.issue_state}</td>
+                <td>{item.issue_category}</td>
+            </tr>
+        );
+    } else {
+        return (
+            <tr>
+                <td>{item.issue_subject}</td>
+                <td>{item.issue_body}</td>
+                <td>Anonymous User</td>
+                <td>{item.issue_state}</td>
+                <td>{item.issue_category}</td>
+            </tr>
+        );
+    }
+}
+
 function Preview({ token }) {
     const navigate = useNavigate();
     const recaptchaRef = useRef();
@@ -48,20 +72,12 @@ function Preview({ token }) {
                         <tr>
                             <th>Issue Subject</th>
                             <th>Issue Body</th>
+                            <th>Author</th>
                             <th>Issue State</th>
                             <th>Issue Category</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {data.map((item, index) => (
-                            <tr>
-                                <td>{item.issue_subject}</td>
-                                <td>{item.issue_body}</td>
-                                <td>{item.issue_state}</td>
-                                <td>{item.issue_category}</td>
-                            </tr>
-                        ))}
-                    </tbody>
+                    <tbody>{data.map((item, index) => TableRow(item))}</tbody>
                 </table>
                 <Link to="/login">
                     <button>Login</button>

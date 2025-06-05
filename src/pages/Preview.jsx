@@ -85,6 +85,9 @@ function Preview({ token }) {
                 <Link to="/register">
                     <button>Register</button>
                 </Link>
+                <Link to="/issue-create">
+                    <button>Post Issue</button>
+                </Link>
             </div>
         );
     }

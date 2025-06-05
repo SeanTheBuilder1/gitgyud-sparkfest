@@ -65,7 +65,7 @@ function Login({ setToken }) {
                 <button type="submit">Login</button>
                 <ReCAPTCHA ref={recaptchaRef} size="invisible" sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
             </form>
-            <Link to="/">Register</Link>
+            <Link to="/register">Register</Link>
         </div>
     );
 }

@@ -1,0 +1,113 @@
+import "../App.css";
+import supabase from "../supabase-client";
+import { useRef, useState, createRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import ReCAPTCHA from "react-google-recaptcha";
+const recaptchaRef = createRef();
+
+function TableRow({ item }) {
+    const table_id = item.issue_id;
+    async function deleteItem() {
+        const response = await supabase.from("issues").delete().eq("issue_id", table_id);
+        if (response.status != 204) {
+            alert("Error deleting issue");
+            return;
+        }
+        alert("Deleting issue successful");
+        window.location.reload();
+    }
+    if (item?.users?.username) {
+        return (
+            <tr>
+                <td>{item.issue_subject}</td>
+                <td>{item.issue_body}</td>
+                <td>{item.users.username}</td>
+                <td>{item.issue_state}</td>
+                <td>{item.issue_category}</td>
+                <td>
+                    <button onClick={deleteItem}>Delete</button>
+                </td>
+            </tr>
+        );
+    } else {
+        return (
+            <tr>
+                <td>{item.issue_subject}</td>
+                <td>{item.issue_body}</td>
+                <td>Anonymous User</td>
+                <td>{item.issue_state}</td>
+                <td>{item.issue_category}</td>
+                <td>
+                    <button onClick={deleteItem}>Delete</button>
+                </td>
+            </tr>
+        );
+    }
+}
+
+function UserProfile({ token }) {
+    const navigate = useNavigate();
+    const recaptchaRef = useRef();
+    const onSubmitWithReCAPTCHA = async () => {
+        const token = await recaptchaRef.current.executeAsync();
+        // apply to form data
+    };
+    const [data, setData] = useState();
+    const table = [];
+    async function getIssues() {
+        const { data: user_data, error: user_error } = await supabase.auth.getUser();
+        if (user_error) {
+            console.log(user_error);
+            return "";
+        }
+        const { data, error } = await supabase
+            .from("issues")
+            .select("*, users(username)")
+            .eq("user_id", user_data.user.id);
+        if (error) {
+        } else {
+            return data;
+        }
+    }
+    useEffect(() => {
+        if (!data) getIssues().then(setData); // enforce run once
+        console.log(data);
+    }, [data]);
+    if (data) {
+        return (
+            <div>
+                <h1>Open Issues</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Issue Subject</th>
+                            <th>Issue Body</th>
+                            <th>Author</th>
+                            <th>Issue State</th>
+                            <th>Issue Category</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((item, index) => (
+                            <TableRow item={item} />
+                        ))}
+                    </tbody>
+                </table>
+                <Link to="/login">
+                    <button>Login</button>
+                </Link>
+                <Link to="/register">
+                    <button>Register</button>
+                </Link>
+                <Link to="/issue-create">
+                    <button>Post Issue</button>
+                </Link>
+            </div>
+        );
+    } else {
+        return <div></div>;
+    }
+}
+
+export default UserProfile;

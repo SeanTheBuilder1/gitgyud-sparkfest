@@ -36,38 +36,6 @@ function UserProfile({ token }) {
     const [comment_data, setCommentData] = useState();
     const [comment, setComment] = useState();
     const table = [];
-    async function getIssues() {
-        const { data: user_data, error: user_error } = await supabase.auth.getUser();
-        if (user_error) {
-            console.log(user_error);
-            return "";
-        }
-        const { data, error } = await supabase
-            .from("issues")
-            .select("*, users(username)")
-            .eq("issue_id", parseInt(issue_id))
-            .single();
-        if (error) {
-        } else {
-            return data;
-        }
-    }
-    async function getComments() {
-        const { data: user_data, error: user_error } = await supabase.auth.getUser();
-        if (user_error) {
-            console.log(user_error);
-            return "";
-        }
-        const { data, error } = await supabase
-            .from("comments")
-            .select("*, users(username)")
-            .eq("issue_id", parseInt(issue_id));
-        if (error) {
-            console.log(error);
-        } else {
-            return data;
-        }
-    }
     async function formSubmit(e) {
         e.preventDefault();
         const { data, error: user_error } = await supabase.auth.getUser();
@@ -92,10 +60,43 @@ function UserProfile({ token }) {
         }
     }
     useEffect(() => {
+        async function getIssues() {
+            const { data: user_data, error: user_error } = await supabase.auth.getUser();
+            if (user_error) {
+                console.log(user_error);
+                return "";
+            }
+            const { data, error } = await supabase
+                .from("issues")
+                .select("*, users(username)")
+                .eq("issue_id", parseInt(issue_id))
+                .single();
+            if (error) {
+            } else {
+                return data;
+            }
+        }
+        async function getComments() {
+            const { data: user_data, error: user_error } = await supabase.auth.getUser();
+            if (user_error) {
+                console.log(user_error);
+                return "";
+            }
+            const { data, error } = await supabase
+                .from("comments")
+                .select("*, users(username)")
+                .eq("issue_id", parseInt(issue_id));
+            if (error) {
+                console.log(error);
+            } else {
+                return data;
+            }
+        }
+
         if (!data) getIssues().then(setData); // enforce run once
         if (!comment_data) getComments().then(setCommentData); // enforce run once
-    }, [data, comment_data]);
-    if (data) {
+    }, [data, comment_data, issue_id]);
+    if (data && comment_data) {
         return (
             <div>
                 <h1>Open Issues</h1>

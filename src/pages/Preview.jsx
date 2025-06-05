@@ -90,17 +90,17 @@ function Preview({ token }) {
             if (district !== 0) {
                 query = query.eq("barangay_lookup_table.district", district);
             }
-            let filter = [];
+            let issue_filter_list = [];
             if (open_filter) {
-                filter.push("open");
+                issue_filter_list.push("open");
             }
             if (closed_filter) {
-                filter.push("closed");
+                issue_filter_list.push("closed");
             }
             if (resolved_filter) {
-                filter.push("resolved");
+                issue_filter_list.push("resolved");
             }
-            query = query.in("issue_state", filter);
+            query = query.in("issue_state", issue_filter_list);
             const { data, error } = await query;
             if (error) {
                 console.log(error);

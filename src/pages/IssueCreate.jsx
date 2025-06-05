@@ -25,6 +25,7 @@ function IssueCreate({ token }) {
 
     const [subject, setSubject] = useState("");
     const [body, setBody] = useState("");
+    const [anon, setAnon] = useState(false);
     const [category, setCategory] = useState("Road");
 
     const recaptchaRef = useRef();
@@ -36,6 +37,11 @@ function IssueCreate({ token }) {
     };
     async function formSubmit(e) {
         e.preventDefault();
+        const { data, error: user_error } = await supabase.auth.getUser();
+        if (user_error) {
+            console.log(user_error);
+            return;
+        }
         const { error } = await supabase
             .from("issues")
             .insert({
@@ -43,11 +49,15 @@ function IssueCreate({ token }) {
                 issue_category: category,
                 issue_subject: subject,
                 issue_body: body,
+                user_id: anon ? null : data.user.id,
             })
             .single();
         if (error) {
-            console.log(category);
+            alert("Error posting issue, please try again later.");
             console.log(error);
+        } else {
+            alert("Post Successful");
+            navigate("/");
         }
     }
     return (
@@ -92,9 +102,13 @@ function IssueCreate({ token }) {
                 />
                 <br />
                 <button type="submit">Submit Issue</button>
+                <input value={anon} onChange={(event) => setAnon(event.target.checked)} type="checkbox" />
+                Post as Anonymous User
                 <ReCAPTCHA ref={recaptchaRef} size="invisible" sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
             </form>
-            <Link to="/">Register</Link>
+            <Link to="/">
+                <button>Cancel</button>
+            </Link>
         </div>
     );
 }

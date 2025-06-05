@@ -57,6 +57,7 @@ function Preview({ token }) {
         // apply to form data
     };
     const [data, setData] = useState();
+    const [district, setDistrict] = useState(0);
     const table = [];
     async function getIssues() {
         const { data, error } = await supabase.from("issues").select("*, users(username)").eq("issue_state", "open");
@@ -66,12 +67,41 @@ function Preview({ token }) {
         }
     }
     useEffect(() => {
-        if (!data) getIssues().then(setData); // enforce run once
-    }, [data]);
+        getDistrictData(district);
+    }, [district]);
+    async function getDistrictData(value) {
+        const district = parseInt(value);
+        setDistrict(district);
+        let query = supabase.from("issues").select("*, users(username), barangay_lookup_table!inner(district)");
+        if (district !== 0) {
+            query = query.eq("barangay_lookup_table.district", district);
+        }
+        const { data, error } = await query;
+        if (error) {
+            console.log(error);
+        } else {
+            setData(data);
+        }
+    }
     if (data) {
         return (
             <div>
                 <h1>Open Issues</h1>
+                <select
+                    value={district}
+                    onChange={(event) => setDistrict(event.target.value)}
+                    name="District"
+                    id="district"
+                >
+                    <option value={0}>All Districts</option>
+                    <option value={1}>District 1</option>
+                    <option value={2}>District 2</option>
+                    <option value={3}>District 3</option>
+                    <option value={4}>District 4</option>
+                    <option value={5}>District 5</option>
+                    <option value={6}>District 6</option>
+                </select>
+
                 <table>
                     <thead>
                         <tr>

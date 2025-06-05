@@ -65,7 +65,11 @@ function Login({ token, loadSupabaseUser }) {
                 <button type="submit">Login</button>
                 <ReCAPTCHA ref={recaptchaRef} size="invisible" sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
             </form>
-            <Link to="/register">Register</Link>
+            No account? <Link to="/register">Register</Link>
+            <br />
+            <Link to="/">
+                <button>Issues</button>
+            </Link>
         </div>
     );
 }

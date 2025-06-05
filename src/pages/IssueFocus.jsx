@@ -120,6 +120,9 @@ function UserProfile({ token }) {
                     />
                     <button type="submit">Submit</button>
                 </form>
+                <Link to="/">
+                    <button>Issues</button>
+                </Link>
             </div>
         );
     } else {

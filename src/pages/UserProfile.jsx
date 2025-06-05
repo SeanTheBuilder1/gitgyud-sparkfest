@@ -116,6 +116,9 @@ function UserProfile({ token, setSupabaseUser }) {
                             <button>Post Issue</button>
                         </Link>
                         <button onClick={handleLogout}>Logout</button>
+                        <Link to="/">
+                            <button>Issues</button>
+                        </Link>
                     </div>
                 ) : (
                     <div>
@@ -124,6 +127,9 @@ function UserProfile({ token, setSupabaseUser }) {
                         </Link>
                         <Link to="/register">
                             <button>Register</button>
+                        </Link>
+                        <Link to="/">
+                            <button>Issues</button>
                         </Link>
                     </div>
                 )}

@@ -67,7 +67,11 @@ function Register() {
                 <button type="submit">Register</button>
                 <ReCAPTCHA ref={recaptchaRef} size="invisible" sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
             </form>
-            <Link to="/login">Login</Link>
+            Already have an account? <Link to="/login">Login</Link>
+            <br />
+            <Link to="/">
+                <button>Issues</button>
+            </Link>
         </div>
     );
 }

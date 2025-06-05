@@ -49,6 +49,22 @@ function TableRow(item) {
     }
 }
 
+function Checkbox({ label, value, setCheckboxFilter }) {
+    function handleCheck(label, value) {
+        setCheckboxFilter((prev) => ({
+            ...prev,
+            [label]: value,
+        }));
+    }
+    return (
+        <>
+            <br />
+            {label}
+            <input checked={value} onChange={(event) => handleCheck(label, event.target.checked)} type="checkbox" />
+        </>
+    );
+}
+
 function Preview({ token }) {
     const navigate = useNavigate();
     const recaptchaRef = useRef();
@@ -101,6 +117,14 @@ function Preview({ token }) {
                 issue_filter_list.push("resolved");
             }
             query = query.in("issue_state", issue_filter_list);
+            let category_filter_list = [];
+            Object.entries(category_filter).forEach(([key, value]) => {
+                if (value) {
+                    category_filter_list.push(key);
+                }
+            });
+            query = query.in("issue_category", category_filter_list);
+
             const { data, error } = await query;
             if (error) {
                 console.log(error);
@@ -109,7 +133,7 @@ function Preview({ token }) {
             }
         }
         getData(district, open_filter, closed_filter, resolved_filter);
-    }, [district, open_filter, closed_filter, resolved_filter]);
+    }, [district, open_filter, closed_filter, resolved_filter, category_filter]);
     if (data) {
         return (
             <div>
@@ -149,6 +173,9 @@ function Preview({ token }) {
                     onChange={(event) => setResolvedFilter(event.target.checked)}
                     type="checkbox"
                 />
+                {Object.entries(category_filter).map(([key, value]) => (
+                    <Checkbox label={key} value={value} setCheckboxFilter={setCategoryFilter} />
+                ))}
                 <table>
                     <thead>
                         <tr>

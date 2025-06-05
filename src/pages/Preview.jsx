@@ -58,6 +58,23 @@ function Preview({ token }) {
     };
     const [data, setData] = useState();
     const [district, setDistrict] = useState(0);
+    const [open_filter, setOpenFilter] = useState(true);
+    const [closed_filter, setClosedFilter] = useState(false);
+    const [resolved_filter, setResolvedFilter] = useState(false);
+    const [category_filter, setCategoryFilter] = useState({
+        Road: true,
+        Sanitation: true,
+        Parks: true,
+        Utilities: true,
+        Neighbor: true,
+        Property: true,
+        Safety: true,
+        Transportation: true,
+        Animals: true,
+        Environment: true,
+        Governmental: true,
+        Others: true,
+    });
     const table = [];
     async function getIssues() {
         const { data, error } = await supabase.from("issues").select("*, users(username)").eq("issue_state", "open");
@@ -67,22 +84,32 @@ function Preview({ token }) {
         }
     }
     useEffect(() => {
-        getDistrictData(district);
-    }, [district]);
-    async function getDistrictData(value) {
-        const district = parseInt(value);
-        setDistrict(district);
-        let query = supabase.from("issues").select("*, users(username), barangay_lookup_table!inner(district)");
-        if (district !== 0) {
-            query = query.eq("barangay_lookup_table.district", district);
+        async function getData(district_value, open_filter, closed_filter, resolved_filter) {
+            const district = parseInt(district_value);
+            let query = supabase.from("issues").select("*, users(username), barangay_lookup_table!inner(district)");
+            if (district !== 0) {
+                query = query.eq("barangay_lookup_table.district", district);
+            }
+            let filter = [];
+            if (open_filter) {
+                filter.push("open");
+            }
+            if (closed_filter) {
+                filter.push("closed");
+            }
+            if (resolved_filter) {
+                filter.push("resolved");
+            }
+            query = query.in("issue_state", filter);
+            const { data, error } = await query;
+            if (error) {
+                console.log(error);
+            } else {
+                setData(data);
+            }
         }
-        const { data, error } = await query;
-        if (error) {
-            console.log(error);
-        } else {
-            setData(data);
-        }
-    }
+        getData(district, open_filter, closed_filter, resolved_filter);
+    }, [district, open_filter, closed_filter, resolved_filter]);
     if (data) {
         return (
             <div>
@@ -101,7 +128,27 @@ function Preview({ token }) {
                     <option value={5}>District 5</option>
                     <option value={6}>District 6</option>
                 </select>
-
+                <br />
+                Open
+                <input
+                    checked={open_filter}
+                    onChange={(event) => setOpenFilter(event.target.checked)}
+                    type="checkbox"
+                />
+                <br />
+                Closed
+                <input
+                    checked={closed_filter}
+                    onChange={(event) => setClosedFilter(event.target.checked)}
+                    type="checkbox"
+                />
+                <br />
+                Resolved
+                <input
+                    checked={resolved_filter}
+                    onChange={(event) => setResolvedFilter(event.target.checked)}
+                    type="checkbox"
+                />
                 <table>
                     <thead>
                         <tr>

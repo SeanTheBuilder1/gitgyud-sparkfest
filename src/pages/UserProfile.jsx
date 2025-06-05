@@ -49,7 +49,7 @@ function TableRow({ item }) {
     }
 }
 
-function UserProfile({ token }) {
+function UserProfile({ token, setSupabaseUser }) {
     const navigate = useNavigate();
     const recaptchaRef = useRef();
     const onSubmitWithReCAPTCHA = async () => {
@@ -73,6 +73,18 @@ function UserProfile({ token }) {
             return data;
         }
     }
+    async function handleLogout() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            alert(error);
+            console.log(error);
+        } else {
+            alert("Logged out\n");
+            setSupabaseUser();
+            navigate("/");
+        }
+    }
+
     useEffect(() => {
         if (!data) getIssues().then(setData); // enforce run once
         console.log(data);
@@ -80,7 +92,7 @@ function UserProfile({ token }) {
     if (data) {
         return (
             <div>
-                <h1>Open Issues</h1>
+                <h1>{token.user_metadata.username}'s Profile</h1>
                 <table>
                     <thead>
                         <tr>
@@ -98,15 +110,23 @@ function UserProfile({ token }) {
                         ))}
                     </tbody>
                 </table>
-                <Link to="/login">
-                    <button>Login</button>
-                </Link>
-                <Link to="/register">
-                    <button>Register</button>
-                </Link>
-                <Link to="/issue-create">
-                    <button>Post Issue</button>
-                </Link>
+                {token ? (
+                    <div>
+                        <Link to="/issue-create">
+                            <button>Post Issue</button>
+                        </Link>
+                        <button onClick={handleLogout}>Logout</button>
+                    </div>
+                ) : (
+                    <div>
+                        <Link to="/login">
+                            <button>Login</button>
+                        </Link>
+                        <Link to="/register">
+                            <button>Register</button>
+                        </Link>
+                    </div>
+                )}
             </div>
         );
     } else {

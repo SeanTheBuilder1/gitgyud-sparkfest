@@ -84,15 +84,25 @@ function Preview({ token }) {
                     </thead>
                     <tbody>{data.map((item, index) => TableRow(item))}</tbody>
                 </table>
-                <Link to="/login">
-                    <button>Login</button>
-                </Link>
-                <Link to="/register">
-                    <button>Register</button>
-                </Link>
-                <Link to="/issue-create">
-                    <button>Post Issue</button>
-                </Link>
+                {token ? (
+                    <div>
+                        <Link to="/profile">
+                            <button>Profile</button>
+                        </Link>
+                        <Link to="/issue-create">
+                            <button>Post Issue</button>
+                        </Link>
+                    </div>
+                ) : (
+                    <div>
+                        <Link to="/login">
+                            <button>Login</button>
+                        </Link>
+                        <Link to="/register">
+                            <button>Register</button>
+                        </Link>
+                    </div>
+                )}
             </div>
         );
     }

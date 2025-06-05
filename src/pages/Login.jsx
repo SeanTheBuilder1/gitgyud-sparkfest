@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router";
 import ReCAPTCHA from "react-google-recaptcha";
 const recaptchaRef = createRef();
 
-function Login({ setToken }) {
+function Login({ token, loadSupabaseUser }) {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -28,8 +28,8 @@ function Login({ setToken }) {
             });
             if (error) throw error;
             console.log(data);
-            setToken(data);
-            navigate("/homepage");
+            loadSupabaseUser();
+            navigate("/");
         } catch (error) {
             alert(error);
         }

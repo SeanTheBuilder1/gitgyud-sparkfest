@@ -8,7 +8,6 @@ const recaptchaRef = createRef();
 function Home({ token }) {
     const navigate = useNavigate();
     async function handleLogout() {
-        sessionStorage.removeItem("token");
         const { error } = await supabase.auth.signOut();
         if (error) {
             alert(error);
@@ -44,7 +43,10 @@ function Home({ token }) {
                 </div>
             </div>
             <div>
-                Welcome back, {token.user.user_metadata.username}
+                Welcome back, {token.user_metadata.username}
+                <Link to="/">
+                    <button>Check Issues</button>
+                </Link>
                 <button onClick={handleLogout}>Logout</button>
             </div>
         </div>

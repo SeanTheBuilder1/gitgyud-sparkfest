@@ -33,7 +33,6 @@ function UserProfile({ token }) {
     }
     useEffect(() => {
         if (!data) getIssues().then(setData); // enforce run once
-        console.log(data);
     }, [data]);
     if (data) {
         return (

@@ -6,9 +6,9 @@ import ReCAPTCHA from "react-google-recaptcha";
 const recaptchaRef = createRef();
 
 function TableRow({ item }) {
-    const table_id = item.issue_id;
+    const item_id = item.issue_id;
     async function deleteItem() {
-        const response = await supabase.from("issues").delete().eq("issue_id", table_id);
+        const response = await supabase.from("issues").delete().eq("issue_id", item_id);
         if (response.status != 204) {
             alert("Error deleting issue");
             return;
@@ -19,7 +19,9 @@ function TableRow({ item }) {
     if (item?.users?.username) {
         return (
             <tr>
-                <td>{item.issue_subject}</td>
+                <td>
+                    <Link to={"/issues/".concat(item_id)}>{item.issue_subject}</Link>
+                </td>
                 <td>{item.issue_body}</td>
                 <td>{item.users.username}</td>
                 <td>{item.issue_state}</td>
@@ -32,7 +34,9 @@ function TableRow({ item }) {
     } else {
         return (
             <tr>
-                <td>{item.issue_subject}</td>
+                <td>
+                    <Link to={"/issues/".concat(item_id)}>{item.issue_subject}</Link>
+                </td>
                 <td>{item.issue_body}</td>
                 <td>Anonymous User</td>
                 <td>{item.issue_state}</td>

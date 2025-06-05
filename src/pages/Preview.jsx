@@ -21,10 +21,13 @@ const category_lookup = [
 ];
 
 function TableRow(item) {
+    const item_id = item.issue_id;
     if (item?.users?.username) {
         return (
             <tr>
-                <td>{item.issue_subject}</td>
+                <td>
+                    <Link to={"/issues/".concat(item_id)}>{item.issue_subject}</Link>
+                </td>
                 <td>{item.issue_body}</td>
                 <td>{item.users.username}</td>
                 <td>{item.issue_state}</td>
@@ -34,7 +37,9 @@ function TableRow(item) {
     } else {
         return (
             <tr>
-                <td>{item.issue_subject}</td>
+                <td>
+                    <Link to={"/issues/".concat(item_id)}>{item.issue_subject}</Link>
+                </td>
                 <td>{item.issue_body}</td>
                 <td>Anonymous User</td>
                 <td>{item.issue_state}</td>

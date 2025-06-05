@@ -10,14 +10,16 @@ function Comment({ comment }) {
         return (
             <div>
                 {comment.comment_text}
-                {comment.users.username}
+                <br />
+                Commenter: {comment.users.username}
             </div>
         );
     } else {
         return (
             <div>
                 {comment.comment_text}
-                Anonymous User
+                <br />
+                Commenter: Anonymous User
             </div>
         );
     }
@@ -99,18 +101,20 @@ function UserProfile({ token }) {
     if (data && comment_data) {
         return (
             <div>
-                <h1>Open Issues</h1>
                 <h2>{data.issue_subject}</h2>
                 {data.issue_body}
                 <br />
-                {data.issue_category}
+                Category: {data.issue_category}
                 <br />
-                {data.issue_state}
+                Status: {data.issue_state}
                 <br />
-                {data?.users?.username ? data.users.username : "Anonymous User"}
+                Author: {data?.users?.username ? data.users.username : "Anonymous User"}
+                <br />
+                <br />
+                Comments
                 <br />
                 {comment_data.map((item, index) => {
-                    <Comment comment={item} />;
+                    return <Comment comment={item} />;
                 })}
                 <br />
                 <form onSubmit={formSubmit}>

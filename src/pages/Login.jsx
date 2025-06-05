@@ -29,7 +29,11 @@ function Login({ token, loadSupabaseUser }) {
             if (error) throw error;
             console.log(data);
             loadSupabaseUser();
-            navigate("/");
+            if (!data.user.phone_confirmed_at) {
+                navigate("/phone-otp");
+            } else {
+                navigate("/");
+            }
         } catch (error) {
             alert(error);
         }

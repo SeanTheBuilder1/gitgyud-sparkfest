@@ -5,5 +5,6 @@ import IssueCreate from "./IssueCreate";
 import Preview from "./Preview";
 import UserProfile from "./UserProfile";
 import IssueFocus from "./IssueFocus";
+import PhoneRegister from "./PhoneRegister";
 
-export { Login, Register, Home, Preview, IssueCreate, UserProfile, IssueFocus };
+export { Login, Register, Home, Preview, IssueCreate, UserProfile, IssueFocus, PhoneRegister };

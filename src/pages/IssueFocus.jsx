@@ -63,11 +63,6 @@ function UserProfile({ token }) {
     }
     useEffect(() => {
         async function getIssues() {
-            const { data: user_data, error: user_error } = await supabase.auth.getUser();
-            if (user_error) {
-                console.log(user_error);
-                return "";
-            }
             const { data, error } = await supabase
                 .from("issues")
                 .select("*, users(username)")
@@ -79,11 +74,6 @@ function UserProfile({ token }) {
             }
         }
         async function getComments() {
-            const { data: user_data, error: user_error } = await supabase.auth.getUser();
-            if (user_error) {
-                console.log(user_error);
-                return "";
-            }
             const { data, error } = await supabase
                 .from("comments")
                 .select("*, users(username)")

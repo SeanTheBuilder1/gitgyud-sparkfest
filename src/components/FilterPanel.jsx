@@ -34,7 +34,20 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
             district: value,
             update_barangays: true,
         }));
+        
+    }
+    function handleUnselectAll(){
+        setFilter((prev) => ({
+            ...prev,
+            barangays:  Object.fromEntries(Object.entries(prev.barangays).map(([key])=>[key, false])),
+        }));
         console.log(filter.barangays);
+    }
+    function handleSelectAll(){
+        setFilter((prev) => ({
+            ...prev,
+            barangays:  Object.fromEntries(Object.entries(prev.barangays).map(([key])=>[key, true])),
+        }));
     }
     return (
         <div className="filter-panel">
@@ -73,7 +86,7 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
                                         onChange={(event) => handleStatusCheck("resolved", event.target.checked)}
                                     />
                                     <span>{"Resolved"}</span>
-                                </label>
+                                </label> 
                             </div>
                         </div>
 
@@ -120,7 +133,7 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
 
                         {/* Districts */}
                         <div>
-                            <span>
+                            <div style={{display:"grid"}}>
                                 <select
                                     value={filter.district}
                                     onChange={(event) => handleDistrictSelect(event.target.value)}
@@ -135,7 +148,15 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
                                     <option value={5}>District 5</option>
                                     <option value={6}>District 6</option>
                                 </select>
-                            </span>
+                                {Object.values(filter.barangays).every((value) => !value) && filter.district !== 0 ? 
+                             <button onClick={handleSelectAll}>Select All</button>
+                            
+                            :
+                                <button onClick={handleUnselectAll}>Unselect All</button>
+                            }
+                                
+                            </div>
+                            
                             {parseInt(filter.district) !== 0 ? (
                                 <div className="checkbox-group">
                                     {Object.entries(filter.barangays).map(([key, value]) => (

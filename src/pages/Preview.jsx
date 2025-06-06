@@ -4,6 +4,7 @@ import { useRef, useState, createRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
 import IssueList from "../components/IssueList";
+import IssuePreview from "../components/IssuePreview";
 import ReCAPTCHA from "react-google-recaptcha";
 import FilterPanel from "../components/FilterPanel";
 const recaptchaRef = createRef();
@@ -76,7 +77,6 @@ function Preview({ token }) {
         // apply to form data
     };
     const [data, setData] = useState();
-    const [district, setDistrict] = useState(0);
     const [filter, setFilter] = useState({
         status: {
             open: true,
@@ -101,10 +101,7 @@ function Preview({ token }) {
         update_barangays: true,
         barangays: {},
     });
-    const [open_filter, setOpenFilter] = useState(true);
-    const [closed_filter, setClosedFilter] = useState(false);
-    const [resolved_filter, setResolvedFilter] = useState(false);
-    const [category_filter, setCategoryFilter] = useState({});
+    const [selected_id, setSelectedId] = useState(0);
     const table = [];
     async function getIssues() {
         const { data, error } = await supabase.from("issues").select("*, users(username)").eq("issue_state", "open");
@@ -195,14 +192,9 @@ function Preview({ token }) {
                     }}
                 >
                     <FilterPanel filter={filter} setFilter={setFilter} />
-                    <div
-                        style={{
-                            "grid-column": "span 6",
-                            padding: "1rem",
-                        }}
-                    >
-                        <IssueList reports={data} />
-                        {/* <table>
+                    <IssueList reports={data} selected_id={selected_id} setSelectedId={setSelectedId} list_label={"All Community Reports"} />
+                    <IssuePreview report={(data.find((e) => e.issue_id === selected_id))} />
+                    {/* <table>
                         <thead>
                             <tr>
                                 <th>Issue Subject</th>
@@ -214,27 +206,6 @@ function Preview({ token }) {
                         </thead>
                         <tbody>{data.map((item, index) => TableRow(item))}</tbody>
                         </table> */}
-                    </div>
-
-                    {token ? (
-                        <div>
-                            <Link to="/profile">
-                                <button>Profile</button>
-                            </Link>
-                            <Link to="/issue-create">
-                                <button>Post Issue</button>
-                            </Link>
-                        </div>
-                    ) : (
-                        <div>
-                            <Link to="/login">
-                                <button>Login</button>
-                            </Link>
-                            <Link to="/register">
-                                <button>Register</button>
-                            </Link>
-                        </div>
-                    )}
                 </div>
 
                 {/* <select

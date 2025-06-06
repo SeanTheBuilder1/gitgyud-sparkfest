@@ -18,7 +18,7 @@ function Navbar({ token, activeTab }) {
 
         <div className="nav-links">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             className={activeTab === "dashboard" ? "active" : ""}
           >
             Dashboard

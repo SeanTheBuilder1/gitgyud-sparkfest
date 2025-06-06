@@ -149,7 +149,8 @@ e.preventDefault();
                         <h4>Description</h4>
                         <p style={{ "text-wrap": "wrap", "overflow-wrap": "break-word" }}>{report.issue_body}</p>
                     </div>
-                    {report.image_public_url ?                     <img src={report.image_public_url}/> : ""}
+                    {report.image_public_url ? <img style={{"width":
+                        "10rem","object-fit":"scale-down"}} src={report.image_public_url}/> : ""}
                     <div className="detail-meta">
                         <div className="meta-item">
                             <span className="meta-label">Reported by:</span>

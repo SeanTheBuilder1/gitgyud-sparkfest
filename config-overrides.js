@@ -9,6 +9,10 @@ module.exports = function override(config) {
         stream: require.resolve("stream-browserify"),
         vm: require.resolve("vm-browserify"),
         process: require.resolve("process/browser"),
+        assert: require.resolve("assert/"),
+        util: require.resolve("util/"),
+        url: require.resolve("url/"),
+        fs: require.resolve("fs"),
     };
     config.plugins = (config.plugins || []).concat([
         new webpack.ProvidePlugin({

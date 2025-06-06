@@ -24,9 +24,9 @@
 }
 
 .navbar .logo .circle {
-  width: 32px;
-  height: 32px;
-  background-color: #2563eb; /* Tailwind's bg-blue-600 */
+  width: 100px;
+  height: 20px;
+  /* background-color: #2563eb; Tailwind's bg-blue-600 */
   border-radius: 50%;
   display: flex;
   justify-content: center;

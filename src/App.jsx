@@ -30,7 +30,7 @@ const App = () => {
                 <Route path={"/issues/:issue_id"} element={<IssueFocus token={supabase_user} />} />
                 {supabase_user ? <Route path={"/phone-otp"} element={<PhoneRegister token={supabase_user} />} /> : ""}
                 {supabase_user ? <Route path={"/homepage"} element={<Home token={supabase_user} />} /> : ""}
-                {supabase_user ? <Route path={"/dashboard"} element={<Dashboard token={supabase_user} />} /> : ""}
+                {supabase_user ? <Route path={"/dashboard"} element={<Dashboard token={supabase_user} loadSupabaseUser={loadSupabaseUser} />} /> : ""}
                 {supabase_user ? (
                     <Route
                         path={"/profile"}

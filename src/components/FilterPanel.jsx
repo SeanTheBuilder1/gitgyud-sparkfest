@@ -148,6 +148,7 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
                                     <option value={5}>District 5</option>
                                     <option value={6}>District 6</option>
                                 </select>
+                                    <br/>
                                 {Object.values(filter.barangays).every((value) => !value) && filter.district !== 0 ? 
                              <button onClick={handleSelectAll}>Select All</button>
                             

@@ -2,24 +2,9 @@ import "../App.css";
 import supabase from "../supabase-client";
 import { useRef, useState, createRef } from "react";
 import { Link, useNavigate } from "react-router";
-import Navbar from "../components/Navbar"
+import Navbar from "../components/Navbar";
 import ReCAPTCHA from "react-google-recaptcha";
 const recaptchaRef = createRef();
-
-const category_lookup = [
-    { id: 0, name: "Road" },
-    { id: 1, name: "Sanitation" },
-    { id: 2, name: "Parks" },
-    { id: 3, name: "Utilities" },
-    { id: 4, name: "Neighbor" },
-    { id: 5, name: "Property" },
-    { id: 6, name: "Safety" },
-    { id: 7, name: "Transportation" },
-    { id: 8, name: "Animals" },
-    { id: 9, name: "Environment" },
-    { id: 10, name: "Governmental" },
-    { id: 11, name: "Others" },
-];
 
 function IssueCreate({ token }) {
     const navigate = useNavigate();
@@ -79,17 +64,14 @@ function IssueCreate({ token }) {
                     name="Category"
                     id="category"
                 >
-                    <option value="Road">Road</option>
+                    <option value="Infrastructure">Infrastructure</option>
+                    <option value="Health">Health</option>
                     <option value="Sanitation">Sanitation</option>
-                    <option value="Parks">Parks</option>
-                    <option value="Utilities">Utilities</option>
-                    <option value="Neighbor">Neighbor</option>
-                    <option value="Property">Property</option>
                     <option value="Safety">Safety</option>
                     <option value="Transportation">Transportation</option>
-                    <option value="Animals">Animals</option>
+                    <option value="Utilities">Utilities</option>
                     <option value="Environment">Environment</option>
-                    <option value="Governmental">Governmental</option>
+                    <option value="Government">Governmental</option>
                     <option value="Others">Others</option>
                 </select>
                 <br />

@@ -1,9 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import supabase from "../supabase-client";
-import "./authpanel.css";
 import ReCAPTCHA from "react-google-recaptcha";
+import "./authpanel.css";
 
-export default function AuthPanel({ open, onOpenChange, isLogin, loadSupabaseUser }) {
+function Selection({ items, item, setItem }) {}
+
+export default function PostPanel({ open, onOpenChange, token }) {
+    const [subject, setSubject] = useState("");
+    const [body, setBody] = useState("");
+    const [anon, setAnon] = useState(false);
+    const [category, setCategory] = useState("Infrastructure");
+    const [district, setDistrict] = useState(false);
+    const [barangays, setBarangays] = useState([]);
+    const [barangay, setBarangay] = useState();
 
     const recaptchaRef = useRef();
     const onSubmitWithReCAPTCHA = async () => {
@@ -11,92 +20,92 @@ export default function AuthPanel({ open, onOpenChange, isLogin, loadSupabaseUse
 
         // apply to form data
     };
-    const [loginData, setLoginData] = useState({
-        email: "",
-        password: "",
-    });
-    const [registerData, setRegisterData] = useState({
-        email: "",
-        password: "",
-        confirmPassword: "",
-        name: "",
-    });
-    const [activeTab, setActiveTab] = useState(false);
-    async function loginFormSubmit(e) {
+    async function formSubmit(e) {
         e.preventDefault();
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: loginData.email,
-                password: loginData.password,
-            });
-            if (error) throw error;
-            console.log(data);
-            loadSupabaseUser();
-            if (!data.user.phone_confirmed_at) {
-                // navigate("/phone-otp");
+        const { data, error: user_error } = await supabase.auth.getUser();
+        if (user_error) {
+            console.log(user_error);
+            return;
+        }
+        console.log(barangay)
+        const { error } = await supabase
+            .from("issues")
+            .insert({
+                issue_state: "open",
+                issue_category: category,
+                issue_subject: subject,
+                issue_body: body,
+                barangay_id: barangay,
+                user_id: anon ? null : data.user.id,
+            })
+            .single();
+        if (error) {
+            alert("Error posting issue, please try again later.");
+            console.log(error);
+        } else {
+            alert("Post Successful");
+            onOpenChange(false);
+        }
+    }
+    useEffect(() => {
+        async function getData() {
+            const { data: barangay_data, error: barangay_error } = await supabase
+                .from("barangay_lookup_table")
+                .select("barangay_name, barangay_id")
+                .eq("district", parseInt(district));
+            if (barangay_error) {
+                setBarangays([]);
             } else {
+                const sorted_barangay = barangay_data
+                    .sort((a, b) => (a.barangay_id > b.barangay_id ? 1 : -1))
+                    .map((a) => [a.barangay_name, a.barangay_id]);
+                setBarangays(sorted_barangay);
+                setBarangay(sorted_barangay[0][1]);
             }
-            onOpenChange(false);
-        } catch (error) {
-            alert(error);
         }
-    }
+        getData();
+    }, [district]);
 
-    async function registerFormSubmit(e) {
-        e.preventDefault();
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: registerData.email,
-                password: registerData.password,
-                options: {
-                    data: {
-                        username: registerData.name,
-                    },
-                },
-            });
-            if (error) throw error;
-            console.log(data);
-            alert("Check your email address and login for the first time afterwards");
-            onOpenChange(false);
-        } catch (error) {
-            alert(error);
-        }
-    }
-
-    // const handleDetailsSubmit = (e) => {
+    // async function loginFormSubmit(e) {
     //     e.preventDefault();
-    //     if (registerData.phone) {
-    //         setStep("otp");
-    //     } else {
-    //         onLogin(true, registerData.isAdmin);
+    //     try {
+    //         const { data, error } = await supabase.auth.signInWithPassword({
+    //             email: loginData.email,
+    //             password: loginData.password,
+    //         });
+    //         if (error) throw error;
+    //         console.log(data);
+    //         loadSupabaseUser();
+    //         if (!data.user.phone_confirmed_at) {
+    //             // navigate("/phone-otp");
+    //         } else {
+    //         }
     //         onOpenChange(false);
-    //         resetSignupForm();
+    //     } catch (error) {
+    //         alert(error);
     //     }
-    // };
+    // }
 
-    // const handleOtpSubmit = (e) => {
+    // async function registerFormSubmit(e) {
     //     e.preventDefault();
-    //     if (otp === "123456") {
-    //         onLogin(true, registerData.isAdmin);
+    //     try {
+    //         const { data, error } = await supabase.auth.signUp({
+    //             email: registerData.email,
+    //             password: registerData.password,
+    //             options: {
+    //                 data: {
+    //                     username: registerData.name,
+    //                 },
+    //             },
+    //         });
+    //         if (error) throw error;
+    //         console.log(data);
+    //         alert("Check your email address and login for the first time afterwards");
     //         onOpenChange(false);
-    //         resetSignupForm();
-    //     } else {
-    //         alert("Invalid OTP. Use 123456 for demo.");
+    //     } catch (error) {
+    //         alert(error);
     //     }
-    // };
-
-    // const resetSignupForm = () => {
-    //     setRegisterData({
-    //         email: "",
-    //         password: "",
-    //         confirmPassword: "",
-    //         name: "",
-    //         phone: "",
-    //         isAdmin: false,
-    //     });
-    //     setStep("auth");
-    //     setOtp("");
-    // };
+    // }
 
     if (!open) return null;
 
@@ -106,61 +115,119 @@ export default function AuthPanel({ open, onOpenChange, isLogin, loadSupabaseUse
                 {/* {step === "auth" && ( */}
                 <>
                     <div className="modal-header">
-                        <h2 className="modal-title">Welcome to QSee</h2>
-                        <p className="modal-description">Sign in to your account or create a new one</p>
+                        <h2 className="modal-title">Create Report</h2>
+                        {/* <p className="modal-description"></p> */}
                     </div>
                     <div className="modal-content">
                         <div className="tabs">
-                            <div className="tabs-list">
-                                <button
-                                    className={`tab-trigger ${activeTab === true ? "active" : ""}`}
-                                    onClick={() => setActiveTab(true)}
-                                >
-                                    Login
-                                </button>
-                                <button
-                                    className={`tab-trigger ${activeTab === false ? "active" : ""}`}
-                                    onClick={() => setActiveTab(false)}
-                                >
-                                    Sign Up
-                                </button>
-                            </div>
+                            {/* <div className={`tab-content ${activeTab === true ? "active" : ""}`}> */}
+                            <form onSubmit={formSubmit} className="form">
+                                <div className="form-group">
+                                    <label htmlFor="post-subject" className="form-label">
+                                        Subject
+                                    </label>
+                                    <input
+                                        id="post-subject"
+                                        type="text"
+                                        className="form-input"
+                                        value={subject}
+                                        onChange={(e) => setSubject(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="post-body" className="form-label">
+                                        Body
+                                    </label>
+                                    <textarea
+                                        id="login-body"
+                                        type="text"
+                                        className="form-input"
+                                        value={body}
+                                        onChange={(e) => setBody(e.target.value)}
+                                        required
+                                    />
+                                </div>
 
-                            <div className={`tab-content ${activeTab === true ? "active" : ""}`}>
-                                <form onSubmit={loginFormSubmit} className="form">
-                                    <div className="form-group">
-                                        <label htmlFor="login-email" className="form-label">
-                                            Email
+                                <div className="form-group">
+                                    <div className="tabs-list">
+                                        <label htmlFor="post-category" className="form-label">
+                                            Category
                                         </label>
-                                        <input
-                                            id="login-email"
-                                            type="email"
-                                            className="form-input"
-                                            value={loginData.email}
-                                            onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="login-password" className="form-label">
-                                            Password
+                                        <select
+                                            value={category}
+                                            style={{ cursor: "pointer" }}
+                                            onChange={(event) => setCategory(event.target.value)}
+                                            name="Category"
+                                            id="post-category"
+                                        >
+                                            <option value="Infrastructure">Infrastructure</option>
+                                            <option value="Health">Health</option>
+                                            <option value="Sanitation">Sanitation</option>
+                                            <option value="Safety">Safety</option>
+                                            <option value="Transportation">Transportation</option>
+                                            <option value="Utilities">Utilities</option>
+                                            <option value="Environment">Environment</option>
+                                            <option value="Government">Governmental</option>
+                                            <option value="Others">Others</option>
+                                        </select>
+                                        <label htmlFor="post-district" className="form-label">
+                                            District
                                         </label>
-                                        <input
-                                            id="login-password"
-                                            type="password"
-                                            className="form-input"
-                                            value={loginData.password}
-                                            onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <button type="submit" className="button button-primary button-full">
-                                        Sign In
-                                    </button>
-                                </form>
-                            </div>
 
-                            <div className={`tab-content ${activeTab === false ? "active" : ""}`}>
+                                        <select
+                                            value={district}
+                                            style={{ cursor: "pointer" }}
+                                            onChange={(event) => setDistrict(event.target.value)}
+                                            name="District"
+                                            id="post-district"
+                                        >
+                                            <option value={1}>District 1</option>
+                                            <option value={2}>District 2</option>
+                                            <option value={3}>District 3</option>
+                                            <option value={4}>District 4</option>
+                                            <option value={5}>District 5</option>
+                                            <option value={6}>District 6</option>
+                                            <option value={0}>None</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <div className="tabs-list">
+                                        <label htmlFor="post-barangay" className="form-label">
+                                            Barangay
+                                        </label>
+                                        <select
+                                            style={{ cursor: "pointer" }}
+                                            value={barangay}
+                                            onChange={(event) => setBarangay(event.target.value)}
+                                            name="Barangay"
+                                            id="post-barangay"
+                                        >
+                                            {barangays.map(([barangay_name, barangay_id]) => {
+                                                return (
+                                                    <option key={barangay_id} value={barangay_id}>
+                                                        {barangay_name}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                        <label htmlFor="post-barangay" className="form-label">
+                                            <span>Post as an Anonymous User</span>
+                                            
+                                        </label>
+                                        
+                                        <input value={anon} onChange={(event) => setAnon(event.target.checked)} type="checkbox" />
+
+                                    </div>
+                                </div>
+                                <button type="submit" className="button button-primary button-full">
+                                    Post
+                                </button>
+                            </form>
+                            {/* </div> */}
+
+                            {/* <div className={`tab-content ${activeTab === false ? "active" : ""}`}>
                                 <form onSubmit={registerFormSubmit} className="form">
                                     <div className="form-group">
                                         <label htmlFor="signup-email" className="form-label">
@@ -227,12 +294,11 @@ export default function AuthPanel({ open, onOpenChange, isLogin, loadSupabaseUse
                                         Continue
                                     </button>
                                 </form>
-                            </div>
+                            </div> */}
                         </div>
 
-                        <ReCAPTCHA ref={recaptchaRef} size="invisible" sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
                         <div className="modal-footer">
-                            <button className="button button-ghost" onClick={() => onOpenChange(false)}>
+                            <button className="button button-ghost button-full" onClick={() => onOpenChange(false)}>
                                 Cancel
                             </button>
                         </div>

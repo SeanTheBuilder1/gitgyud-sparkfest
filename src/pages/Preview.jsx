@@ -6,24 +6,10 @@ import Navbar from "../components/Navbar";
 import IssueList from "../components/IssueList";
 import IssuePreview from "../components/IssuePreview";
 import AuthPanel from "../components/AuthPanel";
+import PostPanel from "../components/PostPanel";
 import ReCAPTCHA from "react-google-recaptcha";
 import FilterPanel from "../components/FilterPanel";
 const recaptchaRef = createRef();
-
-const category_lookup = [
-    { id: 0, name: "Road" },
-    { id: 1, name: "Sanitation" },
-    { id: 2, name: "Parks" },
-    { id: 3, name: "Utilities" },
-    { id: 4, name: "Neighbor" },
-    { id: 5, name: "Property" },
-    { id: 6, name: "Safety" },
-    { id: 7, name: "Transportation" },
-    { id: 8, name: "Animals" },
-    { id: 9, name: "Environment" },
-    { id: 10, name: "Governmental" },
-    { id: 11, name: "Others" },
-];
 
 function TableRow(item, loadSupabaseUser) {
     const item_id = item.issue_id;
@@ -78,6 +64,7 @@ function Preview({ token, loadSupabaseUser }) {
         // apply to form data
     };
     const [auth_open, setAuthOpen] = useState(false);
+    const [post_open, setPostOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
     const [data, setData] = useState();
     const [filter, setFilter] = useState({
@@ -87,17 +74,14 @@ function Preview({ token, loadSupabaseUser }) {
             resolved: false,
         },
         category: {
-            Road: true,
+            Infrastructure: true,
+            Health: true,
             Sanitation: true,
-            Parks: true,
-            Utilities: true,
-            Neighbor: true,
-            Property: true,
             Safety: true,
             Transportation: true,
-            Animals: true,
+            Utilities: true,
             Environment: true,
-            Governmental: true,
+            Government: true,
             Others: true,
         },
         district: 0,
@@ -145,8 +129,6 @@ function Preview({ token, loadSupabaseUser }) {
                         }));
                     }
                 }
-            } else {
-                query = query.select("*, users(username), barangay_lookup_table(district, barangay_name)");
                 let barangay_filter_list = [];
                 Object.entries(filter.barangays).forEach(([key, value]) => {
                     if (value) {
@@ -154,6 +136,8 @@ function Preview({ token, loadSupabaseUser }) {
                     }
                 });
                 query = query.in("barangay_lookup_table.barangay_name", barangay_filter_list);
+            } else {
+                query = query.select("*, users(username), barangay_lookup_table(district, barangay_name)");
             }
             let issue_filter_list = [];
             if (filter.status.open) {
@@ -186,23 +170,67 @@ function Preview({ token, loadSupabaseUser }) {
     if (data) {
         return (
             <div>
-                <Navbar token={token} activeTab={"community"} setOpen={setAuthOpen} setIsLogin={setIsLogin}/>
+                <Navbar token={token} activeTab={"community"} setOpen={setAuthOpen} setIsLogin={setIsLogin} />
                 <div
                     style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(12, 1fr)",
-                        gap: "1.5rem",
+                        "padding-top": "1.5rem",
+                        "padding-bottom": "1.5rem",
+                        "padding-left": "1rem",
+                        "padding-right": "1rem",
+                        "max-width": "100%",
+                        "margin-left": "auto",
+                        "margin-right": "auto",
                     }}
                 >
-                    <FilterPanel filter={filter} setFilter={setFilter} />
-                    <IssueList
-                        reports={data}
-                        selected_id={selected_id}
-                        setSelectedId={setSelectedId}
-                        list_label={"All Community Reports"}
-                    />
-                    <IssuePreview report={data.find((e) => e.issue_id === selected_id)} />
-                    {/* <table>
+                    <div
+                        style={{
+                            "justify-content": "space-between",
+                            "align-items": "center",
+                            display: "flex",
+                            "box-sizing": "border-box",
+                            border: "0 solid #e5e7eb",
+                        }}
+                    >
+                        <big>
+                            <strong>
+                                <h1>Community Reports</h1>
+                            </strong>
+                        </big>
+                        <span>
+                            <button
+                                onClick={() => {
+                                    setPostOpen(true);
+                                }}
+                                style={{
+                                    padding: "0.5rem",
+                                    "background-color": "#000000",
+                                    color: "#ffffff",
+                                    "border-radius": "10%",
+                                    display: "flex",
+                                    "justify-content": "center",
+                                    "align-items": "center",
+                                }}
+                            >
+                                + Add Report
+                            </button>
+                        </span>
+                    </div>
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(12, 1fr)",
+                            gap: "1.5rem",
+                        }}
+                    >
+                        <FilterPanel filter={filter} setFilter={setFilter} />
+                        <IssueList
+                            reports={data}
+                            selected_id={selected_id}
+                            setSelectedId={setSelectedId}
+                            list_label={"All Community Reports"}
+                        />
+                        <IssuePreview report={data.find((e) => e.issue_id === selected_id)} />
+                        {/* <table>
                         <thead>
                             <tr>
                                 <th>Issue Subject</th>
@@ -214,9 +242,9 @@ function Preview({ token, loadSupabaseUser }) {
                         </thead>
                         <tbody>{data.map((item, index) => TableRow(item))}</tbody>
                         </table> */}
-                </div>
+                    </div>
 
-                {/* <select
+                    {/* <select
                     value={district}
                     onChange={(event) => setDistrict(event.target.value)}
                     name="District"
@@ -254,13 +282,31 @@ function Preview({ token, loadSupabaseUser }) {
                 {Object.entries(category_filter).map(([key, value]) => (
                     <Checkbox label={key} value={value} setCheckboxFilter={setCategoryFilter} />
                 ))} */}
-                {auth_open ? 
-                <AuthPanel
-                    open={auth_open}
-                    onOpenChange={setAuthOpen}
-                    isLogin={isLogin}
-                    loadSupabaseUser={loadSupabaseUser}
-                />:""}
+                    {auth_open && (
+                        <AuthPanel
+                            open={auth_open}
+                            onOpenChange={setAuthOpen}
+                            isLogin={isLogin}
+                            loadSupabaseUser={loadSupabaseUser}
+                        />
+                    )}
+
+                    {token
+                        ? post_open && <PostPanel open={post_open} onOpenChange={setPostOpen} />
+:                                    
+      post_open && <AuthPanel
+                            open={post_open}
+                            onOpenChange={setPostOpen}
+                            isLogin={isLogin}
+                            loadSupabaseUser={loadSupabaseUser}
+                        />}  
+                        
+                        
+                        
+                        
+                        
+                        
+                           </div>
             </div>
         );
     }

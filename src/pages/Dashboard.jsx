@@ -5,24 +5,11 @@ import { Link, useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
 import IssueList from "../components/IssueList";
 import IssuePreview from "../components/IssuePreview";
+import AuthPanel from "../components/AuthPanel";
+import PostPanel from "../components/PostPanel";
 import ReCAPTCHA from "react-google-recaptcha";
 import FilterPanel from "../components/FilterPanel";
 const recaptchaRef = createRef();
-
-const category_lookup = [
-    { id: 0, name: "Road" },
-    { id: 1, name: "Sanitation" },
-    { id: 2, name: "Parks" },
-    { id: 3, name: "Utilities" },
-    { id: 4, name: "Neighbor" },
-    { id: 5, name: "Property" },
-    { id: 6, name: "Safety" },
-    { id: 7, name: "Transportation" },
-    { id: 8, name: "Animals" },
-    { id: 9, name: "Environment" },
-    { id: 10, name: "Governmental" },
-    { id: 11, name: "Others" },
-];
 
 function TableRow(item) {
     const item_id = item.issue_id;
@@ -69,13 +56,16 @@ function Checkbox({ label, value, setCheckboxFilter }) {
     );
 }
 
-function Dashboard({ token }) {
+function Dashboard({ token, loadSupabaseUser }) {
     const navigate = useNavigate();
     const recaptchaRef = useRef();
     const onSubmitWithReCAPTCHA = async () => {
         const token = await recaptchaRef.current.executeAsync();
         // apply to form data
     };
+    const [auth_open, setAuthOpen] = useState(false);
+    const [isLogin, setIsLogin] = useState(false);
+    const [post_open, setPostOpen] = useState(false);
     const [data, setData] = useState();
     const [filter, setFilter] = useState({
         status: {
@@ -84,17 +74,14 @@ function Dashboard({ token }) {
             resolved: false,
         },
         category: {
-            Road: true,
+            Infrastructure: true,
+            Health: true,
             Sanitation: true,
-            Parks: true,
-            Utilities: true,
-            Neighbor: true,
-            Property: true,
             Safety: true,
             Transportation: true,
-            Animals: true,
+            Utilities: true,
             Environment: true,
-            Governmental: true,
+            Government: true,
             Others: true,
         },
         district: 0,
@@ -142,8 +129,6 @@ function Dashboard({ token }) {
                         }));
                     }
                 }
-            } else {
-                query = query.select("*, users(username), barangay_lookup_table(district, barangay_name)");
                 let barangay_filter_list = [];
                 Object.entries(filter.barangays).forEach(([key, value]) => {
                     if (value) {
@@ -151,6 +136,8 @@ function Dashboard({ token }) {
                     }
                 });
                 query = query.in("barangay_lookup_table.barangay_name", barangay_filter_list);
+            } else {
+                query = query.select("*, users(username), barangay_lookup_table(district, barangay_name)");
             }
             query = query.eq("user_id", token.id);
             let issue_filter_list = [];
@@ -211,11 +198,14 @@ function Dashboard({ token }) {
                             </strong>
                         </big>
                         <span>
-                            <div 
+                            <button
+                                onClick={() => {
+                                    setPostOpen(true);
+                                }}
                                 style={{
                                     padding: "0.5rem",
                                     "background-color": "#000000",
-                                    "color": "#ffffff",
+                                    color: "#ffffff",
                                     "border-radius": "10%",
                                     display: "flex",
                                     "justify-content": "center",
@@ -223,7 +213,7 @@ function Dashboard({ token }) {
                                 }}
                             >
                                 + Add Report
-                            </div>
+                            </button>
                         </span>
                     </div>
                     <div
@@ -243,6 +233,25 @@ function Dashboard({ token }) {
                         <IssuePreview report={data.find((e) => e.issue_id === selected_id)} />
                     </div>
                 </div>
+                {auth_open && (
+                    <AuthPanel
+                        open={auth_open}
+                        onOpenChange={setAuthOpen}
+                        isLogin={isLogin}
+                        loadSupabaseUser={loadSupabaseUser}
+                    />
+                )}
+
+                {token
+                    ? post_open && <PostPanel open={post_open} onOpenChange={setPostOpen} />
+                    : post_open && (
+                          <AuthPanel
+                              open={post_open}
+                              onOpenChange={setPostOpen}
+                              isLogin={isLogin}
+                              loadSupabaseUser={loadSupabaseUser}
+                          />
+                      )}
             </div>
         );
     }

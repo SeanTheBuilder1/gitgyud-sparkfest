@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import { Register, Login, Home, IssueCreate, Preview, UserProfile, IssueFocus, PhoneRegister } from "./pages";
+import { Register, Login, Home, IssueCreate, Preview, UserProfile, IssueFocus, PhoneRegister, Dashboard } from "./pages";
 import { Routes, Route } from "react-router-dom";
 import supabase from "./supabase-client";
 
@@ -30,6 +30,7 @@ const App = () => {
                 <Route path={"/issues/:issue_id"} element={<IssueFocus token={supabase_user} />} />
                 {supabase_user ? <Route path={"/phone-otp"} element={<PhoneRegister token={supabase_user} />} /> : ""}
                 {supabase_user ? <Route path={"/homepage"} element={<Home token={supabase_user} />} /> : ""}
+                {supabase_user ? <Route path={"/dashboard"} element={<Dashboard token={supabase_user} />} /> : ""}
                 {supabase_user ? (
                     <Route
                         path={"/profile"}

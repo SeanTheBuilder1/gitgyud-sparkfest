@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./navbar.css"; // Import the CSS file
+import "../index.css";
 import HandleLogout from "./HandleLogout";
 
 function Navbar({ token, activeTab }) {

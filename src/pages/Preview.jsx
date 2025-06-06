@@ -3,6 +3,7 @@ import supabase from "../supabase-client";
 import { useRef, useState, createRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
+import IssueList from "../components/IssueList";
 import ReCAPTCHA from "react-google-recaptcha";
 import FilterPanel from "../components/FilterPanel";
 const recaptchaRef = createRef();
@@ -115,9 +116,11 @@ function Preview({ token }) {
     useEffect(() => {
         async function getData() {
             const district = parseInt(filter.district);
-            let query = supabase.from("issues").select("*, users(username), barangay_lookup_table!inner(district)");
+            let query = supabase.from("issues");
             if (district !== 0) {
-                query = query.eq("barangay_lookup_table.district", district);
+                query = query
+                    .select("*, users(username), barangay_lookup_table!inner(district, barangay_name)")
+                    .eq("barangay_lookup_table.district", district);
                 if (filter.update_barangays) {
                     const { data: barangay_data, error: barangay_error } = await supabase
                         .from("barangay_lookup_table")
@@ -130,9 +133,11 @@ function Preview({ token }) {
                             update_barangays: false,
                         }));
                     } else {
-                        const sorted_barangay = Object.fromEntries(barangay_data
-                            .sort((a, b) => (a.barangay_id > b.barangay_id ? 1 : -1))
-                            .map((a) => [a.barangay_name, true]));
+                        const sorted_barangay = Object.fromEntries(
+                            barangay_data
+                                .sort((a, b) => (a.barangay_id > b.barangay_id ? 1 : -1))
+                                .map((a) => [a.barangay_name, true]),
+                        );
                         setFilter((prev) => ({
                             ...prev,
                             barangays: sorted_barangay,
@@ -140,8 +145,16 @@ function Preview({ token }) {
                         }));
                     }
                 }
-            } 
-            console.log(filter.barangays)
+            } else {
+                query = query.select("*, users(username), barangay_lookup_table(district, barangay_name)");
+                let barangay_filter_list = [];
+                Object.entries(filter.barangays).forEach(([key, value]) => {
+                    if (value) {
+                        barangay_filter_list.push(key);
+                    }
+                });
+                query = query.in("barangay_lookup_table.barangay_name", barangay_filter_list);
+            }
             let issue_filter_list = [];
             if (filter.status.open) {
                 issue_filter_list.push("open");
@@ -160,6 +173,7 @@ function Preview({ token }) {
                 }
             });
             query = query.in("issue_category", category_filter_list);
+
             const { data, error } = await query;
             if (error) {
                 console.log(error);
@@ -173,7 +187,6 @@ function Preview({ token }) {
         return (
             <div>
                 <Navbar token={token} activeTab={"community"} />
-                <h1>Open Issues</h1>
                 <div
                     style={{
                         display: "grid",
@@ -182,12 +195,14 @@ function Preview({ token }) {
                     }}
                 >
                     <FilterPanel filter={filter} setFilter={setFilter} />
-                    <div style={{
+                    <div
+                        style={{
                             "grid-column": "span 6",
                             padding: "1rem",
                         }}
                     >
-                        <table>
+                        <IssueList reports={data} />
+                        {/* <table>
                         <thead>
                             <tr>
                                 <th>Issue Subject</th>
@@ -198,9 +213,9 @@ function Preview({ token }) {
                             </tr>
                         </thead>
                         <tbody>{data.map((item, index) => TableRow(item))}</tbody>
-                        </table>
-                    </  div>
-                    
+                        </table> */}
+                    </div>
+
                     {token ? (
                         <div>
                             <Link to="/profile">

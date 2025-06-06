@@ -1,0 +1,143 @@
+.reports-list {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.reports-list h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.no-reports {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.reports-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.report-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-card:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.report-card.selected {
+    border-color: #4a90e2;
+    background-color: #f0f7ff;
+}
+
+.report-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.report-number {
+    background-color: #eee;
+    color: #666;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.report-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.report-status {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.status-closed {
+    background-color: #ffebee;
+    color: #4b3e3e;
+    border: 1px solid #ffcdd2;
+}
+
+.status-open {
+    background-color: #fff8e1;
+    color: #ff8f00;
+    border: 1px solid #ffe082;
+}
+
+.status-resolved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.subject-link:hover {
+    text-decoration: underline;
+}
+
+.report-content {
+    padding-left: 34px;
+}
+
+.report-type-location {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.report-description {
+    font-size: 14px;
+    color: #333;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.report-meta {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.volunteers-needed {
+    font-size: 12px;
+    color: #4caf50;
+    display: inline-block;
+    padding: 3px 8px;
+    border: 1px solid #c8e6c9;
+    border-radius: 4px;
+    background-color: #e8f5e9;
+    margin-top: 5px;
+}

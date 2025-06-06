@@ -24,8 +24,8 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
     function handleBarangayCheck(label, value) {
         setFilter((prev) => ({
             ...prev,
-            
-            barangays: {...prev.barangays, [label]: value},
+
+            barangays: { ...prev.barangays, [label]: value },
         }));
     }
     function handleDistrictSelect(value) {
@@ -34,7 +34,7 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
             district: value,
             update_barangays: true,
         }));
-        console.log(filter.barangays)
+        console.log(filter.barangays);
     }
     return (
         <div className="filter-panel">
@@ -120,20 +120,22 @@ function FilterPanel({ activeTab = "dashboard", filter, setFilter }) {
 
                         {/* Districts */}
                         <div>
-                            <select
-                                value={filter.district}
-                                onChange={(event) => handleDistrictSelect(event.target.value)}
-                                name="District"
-                                id="district"
-                            >
-                                <option value={0}>All Districts</option>
-                                <option value={1}>District 1</option>
-                                <option value={2}>District 2</option>
-                                <option value={3}>District 3</option>
-                                <option value={4}>District 4</option>
-                                <option value={5}>District 5</option>
-                                <option value={6}>District 6</option>
-                            </select>
+                            <span>
+                                <select
+                                    value={filter.district}
+                                    onChange={(event) => handleDistrictSelect(event.target.value)}
+                                    name="District"
+                                    id="district"
+                                >
+                                    <option value={0}>All Districts</option>
+                                    <option value={1}>District 1</option>
+                                    <option value={2}>District 2</option>
+                                    <option value={3}>District 3</option>
+                                    <option value={4}>District 4</option>
+                                    <option value={5}>District 5</option>
+                                    <option value={6}>District 6</option>
+                                </select>
+                            </span>
                             {parseInt(filter.district) !== 0 ? (
                                 <div className="checkbox-group">
                                     {Object.entries(filter.barangays).map(([key, value]) => (

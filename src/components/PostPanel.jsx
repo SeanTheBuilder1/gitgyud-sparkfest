@@ -12,7 +12,8 @@ export default function PostPanel({ open, onOpenChange, token }) {
     const [category, setCategory] = useState("Infrastructure");
     const [district, setDistrict] = useState(false);
     const [barangays, setBarangays] = useState([]);
-    const [barangay, setBarangay] = useState();
+    const [barangay, setBarangay] = useState(1);
+    const [files, setFiles] = useState();
 
     const recaptchaRef = useRef();
     const onSubmitWithReCAPTCHA = async () => {
@@ -27,7 +28,32 @@ export default function PostPanel({ open, onOpenChange, token }) {
             console.log(user_error);
             return;
         }
-        console.log(barangay)
+        var full_path;
+        var public_url;
+        if (files) {
+            const avatarFile = files[0];
+            const filename = crypto.randomUUID().concat(".jpg");
+            const { data: file_data, error: file_error } = await supabase.storage.from("commentimages").upload(filename, avatarFile, {
+                cacheControl: "3600",
+                upsert: false,
+            });
+            if(file_error){
+                alert("Error uploading file\n", file_error);
+                return;
+            }
+            else{
+                full_path = file_data.path; 
+                const {data: url_data} = supabase.storage.from("commentimages").getPublicUrl(full_path);
+                if(url_data){
+                    public_url = url_data.publicUrl;
+                }
+                else{
+                    alert("Unable to get public URL");
+                    return;
+                }
+            }
+        }
+
         const { error } = await supabase
             .from("issues")
             .insert({
@@ -37,6 +63,8 @@ export default function PostPanel({ open, onOpenChange, token }) {
                 issue_body: body,
                 barangay_id: barangay,
                 user_id: anon ? null : data.user.id,
+                image_public_url: public_url,
+                image_full_path: full_path,
             })
             .single();
         if (error) {
@@ -214,13 +242,20 @@ export default function PostPanel({ open, onOpenChange, token }) {
                                         </select>
                                         <label htmlFor="post-barangay" className="form-label">
                                             <span>Post as an Anonymous User</span>
-                                            
                                         </label>
-                                        
-                                        <input value={anon} onChange={(event) => setAnon(event.target.checked)} type="checkbox" />
-
+                                        <input
+                                            value={anon}
+                                            onChange={(event) => setAnon(event.target.checked)}
+                                            type="checkbox"
+                                        />
                                     </div>
                                 </div>
+                                <input
+                                    type="file"
+                                    onChange={(e) => setFiles(e.target.files)}
+                                    style={{ paddingBottom: "0.9rem", paddingTop: "0.0rem" }}
+                                    className="button"
+                                ></input>
                                 <button type="submit" className="button button-primary button-full">
                                     Post
                                 </button>

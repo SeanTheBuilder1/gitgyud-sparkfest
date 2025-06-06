@@ -38,7 +38,6 @@ export default function IssueFocus({ token }) {
     };
     const [data, setData] = useState();
     const [comment_data, setCommentData] = useState();
-    const [comment, setComment] = useState();
     const table = [];
 
     useEffect(() => {
@@ -90,7 +89,7 @@ export default function IssueFocus({ token }) {
                 >
                 </div>
 
-                <IssueFocusComp report={data} comments={comment_data}/>
+                <IssueFocusComp report={data} comments={comment_data} issue_id={issue_id}/>
                 <div                     style=
                     {{
                         "grid-column": "span 2",

@@ -2,6 +2,7 @@ import "../App.css";
 import supabase from "../supabase-client";
 import { useRef, useState, createRef, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router";
+import Navbar from "../components/Navbar"
 import ReCAPTCHA from "react-google-recaptcha";
 const recaptchaRef = createRef();
 
@@ -91,6 +92,7 @@ function UserProfile({ token }) {
     if (data && comment_data) {
         return (
             <div>
+            <Navbar token={token} activeTab={""}/>
                 <h2>{data.issue_subject}</h2>
                 {data.issue_body}
                 <br />

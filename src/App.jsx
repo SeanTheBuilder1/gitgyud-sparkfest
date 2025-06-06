@@ -14,6 +14,7 @@ const App = () => {
             return;
         }
         setSupabaseUser(data.user);
+        console.log(data.user)
     }
 
     useEffect(() => {

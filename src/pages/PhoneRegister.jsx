@@ -2,6 +2,7 @@ import "../App.css";
 import supabase from "../supabase-client";
 import { useRef, useState, createRef } from "react";
 import { Link, useNavigate } from "react-router";
+import Navbar from "../components/Navbar"
 import ReCAPTCHA from "react-google-recaptcha";
 const recaptchaRef = createRef();
 

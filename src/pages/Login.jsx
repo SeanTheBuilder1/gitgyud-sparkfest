@@ -3,6 +3,7 @@ import supabase from "../supabase-client";
 import { useRef, useState, createRef } from "react";
 import { Link, useNavigate } from "react-router";
 import ReCAPTCHA from "react-google-recaptcha";
+import Navbar from "../components/Navbar";
 const recaptchaRef = createRef();
 
 function Login({ token, loadSupabaseUser }) {
@@ -30,7 +31,8 @@ function Login({ token, loadSupabaseUser }) {
             console.log(data);
             loadSupabaseUser();
             if (!data.user.phone_confirmed_at) {
-                navigate("/phone-otp");
+                navigate("/");
+                // navigate("/phone-otp");
             } else {
                 navigate("/");
             }
@@ -40,6 +42,7 @@ function Login({ token, loadSupabaseUser }) {
     }
     return (
         <div>
+            <Navbar token={token} activeTab={"login"}/>
             <h1>Login</h1>
             <form onSubmit={formSubmit}>
                 <input

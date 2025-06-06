@@ -2,10 +2,11 @@ import "../App.css";
 import supabase from "../supabase-client";
 import { useRef, useState, createRef } from "react";
 import { Link } from "react-router";
+import Navbar from "../components/Navbar"
 import ReCAPTCHA from "react-google-recaptcha";
 const recaptchaRef = createRef();
 
-function Register() {
+function Register({token}) {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
@@ -38,6 +39,7 @@ function Register() {
     }
     return (
         <div>
+            <Navbar token={token} activeTab={""}/>
             <h1>Register</h1>
             <form onSubmit={formSubmit}>
                 <input

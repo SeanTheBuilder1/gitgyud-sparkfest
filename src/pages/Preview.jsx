@@ -2,7 +2,9 @@ import "../App.css";
 import supabase from "../supabase-client";
 import { useRef, useState, createRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
+import Navbar from "../components/Navbar";
 import ReCAPTCHA from "react-google-recaptcha";
+import FilterPanel from "../components/FilterPanel";
 const recaptchaRef = createRef();
 
 const category_lookup = [
@@ -74,23 +76,34 @@ function Preview({ token }) {
     };
     const [data, setData] = useState();
     const [district, setDistrict] = useState(0);
+    const [filter, setFilter] = useState({
+        status: {
+            open: true,
+            closed: false,
+            resolved: false,
+        },
+        category: {
+            Road: true,
+            Sanitation: true,
+            Parks: true,
+            Utilities: true,
+            Neighbor: true,
+            Property: true,
+            Safety: true,
+            Transportation: true,
+            Animals: true,
+            Environment: true,
+            Governmental: true,
+            Others: true,
+        },
+        district: 0,
+        update_barangays: true,
+        barangays: {},
+    });
     const [open_filter, setOpenFilter] = useState(true);
     const [closed_filter, setClosedFilter] = useState(false);
     const [resolved_filter, setResolvedFilter] = useState(false);
-    const [category_filter, setCategoryFilter] = useState({
-        Road: true,
-        Sanitation: true,
-        Parks: true,
-        Utilities: true,
-        Neighbor: true,
-        Property: true,
-        Safety: true,
-        Transportation: true,
-        Animals: true,
-        Environment: true,
-        Governmental: true,
-        Others: true,
-    });
+    const [category_filter, setCategoryFilter] = useState({});
     const table = [];
     async function getIssues() {
         const { data, error } = await supabase.from("issues").select("*, users(username)").eq("issue_state", "open");
@@ -100,31 +113,53 @@ function Preview({ token }) {
         }
     }
     useEffect(() => {
-        async function getData(district_value, open_filter, closed_filter, resolved_filter) {
-            const district = parseInt(district_value);
+        async function getData() {
+            const district = parseInt(filter.district);
             let query = supabase.from("issues").select("*, users(username), barangay_lookup_table!inner(district)");
             if (district !== 0) {
                 query = query.eq("barangay_lookup_table.district", district);
-            }
+                if (filter.update_barangays) {
+                    const { data: barangay_data, error: barangay_error } = await supabase
+                        .from("barangay_lookup_table")
+                        .select("barangay_name, barangay_id")
+                        .eq("district", district);
+                    if (barangay_error) {
+                        setFilter((prev) => ({
+                            ...prev,
+                            barangays: {},
+                            update_barangays: false,
+                        }));
+                    } else {
+                        const sorted_barangay = Object.fromEntries(barangay_data
+                            .sort((a, b) => (a.barangay_id > b.barangay_id ? 1 : -1))
+                            .map((a) => [a.barangay_name, true]));
+                        setFilter((prev) => ({
+                            ...prev,
+                            barangays: sorted_barangay,
+                            update_barangays: false,
+                        }));
+                    }
+                }
+            } 
+            console.log(filter.barangays)
             let issue_filter_list = [];
-            if (open_filter) {
+            if (filter.status.open) {
                 issue_filter_list.push("open");
             }
-            if (closed_filter) {
+            if (filter.status.closed) {
                 issue_filter_list.push("closed");
             }
-            if (resolved_filter) {
+            if (filter.status.resolved) {
                 issue_filter_list.push("resolved");
             }
             query = query.in("issue_state", issue_filter_list);
             let category_filter_list = [];
-            Object.entries(category_filter).forEach(([key, value]) => {
+            Object.entries(filter.category).forEach(([key, value]) => {
                 if (value) {
                     category_filter_list.push(key);
                 }
             });
             query = query.in("issue_category", category_filter_list);
-
             const { data, error } = await query;
             if (error) {
                 console.log(error);
@@ -132,13 +167,62 @@ function Preview({ token }) {
                 setData(data);
             }
         }
-        getData(district, open_filter, closed_filter, resolved_filter);
-    }, [district, open_filter, closed_filter, resolved_filter, category_filter]);
+        getData();
+    }, [filter]);
     if (data) {
         return (
             <div>
+                <Navbar token={token} activeTab={"community"} />
                 <h1>Open Issues</h1>
-                <select
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(12, 1fr)",
+                        gap: "1.5rem",
+                    }}
+                >
+                    <FilterPanel filter={filter} setFilter={setFilter} />
+                    <div style={{
+                            "grid-column": "span 6",
+                            padding: "1rem",
+                        }}
+                    >
+                        <table>
+                        <thead>
+                            <tr>
+                                <th>Issue Subject</th>
+                                <th>Issue Body</th>
+                                <th>Author</th>
+                                <th>Issue State</th>
+                                <th>Issue Category</th>
+                            </tr>
+                        </thead>
+                        <tbody>{data.map((item, index) => TableRow(item))}</tbody>
+                        </table>
+                    </  div>
+                    
+                    {token ? (
+                        <div>
+                            <Link to="/profile">
+                                <button>Profile</button>
+                            </Link>
+                            <Link to="/issue-create">
+                                <button>Post Issue</button>
+                            </Link>
+                        </div>
+                    ) : (
+                        <div>
+                            <Link to="/login">
+                                <button>Login</button>
+                            </Link>
+                            <Link to="/register">
+                                <button>Register</button>
+                            </Link>
+                        </div>
+                    )}
+                </div>
+
+                {/* <select
                     value={district}
                     onChange={(event) => setDistrict(event.target.value)}
                     name="District"
@@ -175,38 +259,7 @@ function Preview({ token }) {
                 />
                 {Object.entries(category_filter).map(([key, value]) => (
                     <Checkbox label={key} value={value} setCheckboxFilter={setCategoryFilter} />
-                ))}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Issue Subject</th>
-                            <th>Issue Body</th>
-                            <th>Author</th>
-                            <th>Issue State</th>
-                            <th>Issue Category</th>
-                        </tr>
-                    </thead>
-                    <tbody>{data.map((item, index) => TableRow(item))}</tbody>
-                </table>
-                {token ? (
-                    <div>
-                        <Link to="/profile">
-                            <button>Profile</button>
-                        </Link>
-                        <Link to="/issue-create">
-                            <button>Post Issue</button>
-                        </Link>
-                    </div>
-                ) : (
-                    <div>
-                        <Link to="/login">
-                            <button>Login</button>
-                        </Link>
-                        <Link to="/register">
-                            <button>Register</button>
-                        </Link>
-                    </div>
-                )}
+                ))} */}
             </div>
         );
     }

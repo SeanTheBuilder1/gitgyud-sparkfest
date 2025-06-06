@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
 import IssueList from "../components/IssueList";
 import IssuePreview from "../components/IssuePreview";
+import AuthPanel from "../components/AuthPanel";
 import ReCAPTCHA from "react-google-recaptcha";
 import FilterPanel from "../components/FilterPanel";
 const recaptchaRef = createRef();
@@ -24,7 +25,7 @@ const category_lookup = [
     { id: 11, name: "Others" },
 ];
 
-function TableRow(item) {
+function TableRow(item, loadSupabaseUser) {
     const item_id = item.issue_id;
     if (item?.users?.username) {
         return (
@@ -69,13 +70,15 @@ function Checkbox({ label, value, setCheckboxFilter }) {
     );
 }
 
-function Preview({ token }) {
+function Preview({ token, loadSupabaseUser }) {
     const navigate = useNavigate();
     const recaptchaRef = useRef();
     const onSubmitWithReCAPTCHA = async () => {
         const token = await recaptchaRef.current.executeAsync();
         // apply to form data
     };
+    const [auth_open, setAuthOpen] = useState(false);
+    const [isLogin, setIsLogin] = useState(false);
     const [data, setData] = useState();
     const [filter, setFilter] = useState({
         status: {
@@ -183,7 +186,7 @@ function Preview({ token }) {
     if (data) {
         return (
             <div>
-                <Navbar token={token} activeTab={"community"} />
+                <Navbar token={token} activeTab={"community"} setOpen={setAuthOpen} setIsLogin={setIsLogin}/>
                 <div
                     style={{
                         display: "grid",
@@ -192,8 +195,13 @@ function Preview({ token }) {
                     }}
                 >
                     <FilterPanel filter={filter} setFilter={setFilter} />
-                    <IssueList reports={data} selected_id={selected_id} setSelectedId={setSelectedId} list_label={"All Community Reports"} />
-                    <IssuePreview report={(data.find((e) => e.issue_id === selected_id))} />
+                    <IssueList
+                        reports={data}
+                        selected_id={selected_id}
+                        setSelectedId={setSelectedId}
+                        list_label={"All Community Reports"}
+                    />
+                    <IssuePreview report={data.find((e) => e.issue_id === selected_id)} />
                     {/* <table>
                         <thead>
                             <tr>
@@ -246,6 +254,13 @@ function Preview({ token }) {
                 {Object.entries(category_filter).map(([key, value]) => (
                     <Checkbox label={key} value={value} setCheckboxFilter={setCategoryFilter} />
                 ))} */}
+                {auth_open ? 
+                <AuthPanel
+                    open={auth_open}
+                    onOpenChange={setAuthOpen}
+                    isLogin={isLogin}
+                    loadSupabaseUser={loadSupabaseUser}
+                />:""}
             </div>
         );
     }

@@ -26,7 +26,7 @@ const App = () => {
             <Routes>
                 <Route path={"/register"} element={<Register />} />
                 <Route path={"/login"} element={<Login token={supabase_user} loadSupabaseUser={loadSupabaseUser} />} />
-                <Route path={"/"} element={<Preview token={supabase_user} />} />
+                <Route path={"/"} element={<Preview token={supabase_user} loadSupabaseUser={loadSupabaseUser}/>} />
                 <Route path={"/issues/:issue_id"} element={<IssueFocus token={supabase_user} />} />
                 {supabase_user ? <Route path={"/phone-otp"} element={<PhoneRegister token={supabase_user} />} /> : ""}
                 {supabase_user ? <Route path={"/homepage"} element={<Home token={supabase_user} />} /> : ""}

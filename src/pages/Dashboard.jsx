@@ -187,66 +187,62 @@ function Dashboard({ token }) {
                 <Navbar token={token} activeTab={"dashboard"} />
                 <div
                     style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(12, 1fr)",
-                        gap: "1.5rem",
+                        "padding-top": "1.5rem",
+                        "padding-bottom": "1.5rem",
+                        "padding-left": "1rem",
+                        "padding-right": "1rem",
+                        "max-width": "100%",
+                        "margin-left": "auto",
+                        "margin-right": "auto",
                     }}
                 >
-                    <FilterPanel filter={filter} setFilter={setFilter} />
-                    <IssueList reports={data} selected_id={selected_id} setSelectedId={setSelectedId} list_label={"My Reports"} />
-                    <IssuePreview report={(data.find((e) => e.issue_id === selected_id))} />
-                    {/* <table>
-                        <thead>
-                            <tr>
-                                <th>Issue Subject</th>
-                                <th>Issue Body</th>
-                                <th>Author</th>
-                                <th>Issue State</th>
-                                <th>Issue Category</th>
-                            </tr>
-                        </thead>
-                        <tbody>{data.map((item, index) => TableRow(item))}</tbody>
-                        </table> */}
+                    <div
+                        style={{
+                            "justify-content": "space-between",
+                            "align-items": "center",
+                            display: "flex",
+                            "box-sizing": "border-box",
+                            border: "0 solid #e5e7eb",
+                        }}
+                    >
+                        <big>
+                            <strong>
+                                <h1>Dashboard</h1>
+                            </strong>
+                        </big>
+                        <span>
+                            <div 
+                                style={{
+                                    padding: "0.5rem",
+                                    "background-color": "#000000",
+                                    "color": "#ffffff",
+                                    "border-radius": "10%",
+                                    display: "flex",
+                                    "justify-content": "center",
+                                    "align-items": "center",
+                                }}
+                            >
+                                + Add Report
+                            </div>
+                        </span>
+                    </div>
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(12, 1fr)",
+                            gap: "1.5rem",
+                        }}
+                    >
+                        <FilterPanel filter={filter} setFilter={setFilter} />
+                        <IssueList
+                            reports={data}
+                            selected_id={selected_id}
+                            setSelectedId={setSelectedId}
+                            list_label={"My Reports"}
+                        />
+                        <IssuePreview report={data.find((e) => e.issue_id === selected_id)} />
+                    </div>
                 </div>
-
-                {/* <select
-                    value={district}
-                    onChange={(event) => setDistrict(event.target.value)}
-                    name="District"
-                    id="district"
-                >
-                    <option value={0}>All Districts</option>
-                    <option value={1}>District 1</option>
-                    <option value={2}>District 2</option>
-                    <option value={3}>District 3</option>
-                    <option value={4}>District 4</option>
-                    <option value={5}>District 5</option>
-                    <option value={6}>District 6</option>
-                </select>
-                <br />
-                Open
-                <input
-                    checked={open_filter}
-                    onChange={(event) => setOpenFilter(event.target.checked)}
-                    type="checkbox"
-                />
-                <br />
-                Closed
-                <input
-                    checked={closed_filter}
-                    onChange={(event) => setClosedFilter(event.target.checked)}
-                    type="checkbox"
-                />
-                <br />
-                Resolved
-                <input
-                    checked={resolved_filter}
-                    onChange={(event) => setResolvedFilter(event.target.checked)}
-                    type="checkbox"
-                />
-                {Object.entries(category_filter).map(([key, value]) => (
-                    <Checkbox label={key} value={value} setCheckboxFilter={setCategoryFilter} />
-                ))} */}
             </div>
         );
     }

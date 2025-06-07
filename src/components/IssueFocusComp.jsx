@@ -53,16 +53,14 @@ function Comment({ comment }) {
 
 export default function IssueFocusComp({ report, comments, isAdmin, issue_id }) {
     const [volunteersNeeded, setVolunteersNeeded] = useState(report?.volunteersNeeded || false);
-    const [comment, setComment] = useState(
-    ""
-    );
+    const [comment, setComment] = useState("");
     const handleVolunteerToggle = () => {
         if (isAdmin) {
             setVolunteersNeeded(!volunteersNeeded);
         }
     };
-    async function handlePost(e){
-e.preventDefault();
+    async function handlePost(e) {
+        e.preventDefault();
         const { data, error: user_error } = await supabase.auth.getUser();
         if (user_error) {
             // console.log(user_error);
@@ -149,8 +147,17 @@ e.preventDefault();
                         <h4>Description</h4>
                         <p style={{ "text-wrap": "wrap", "overflow-wrap": "break-word" }}>{report.issue_body}</p>
                     </div>
-                    {report.image_public_url ? <img style={{"width":
-                        "10rem","object-fit":"scale-down"}} src={report.image_public_url}/> : ""}
+                    {report.image_public_url ? (
+                        <img
+                            style={{
+                                width: "20rem",
+                                "object-fit": "scale-down",
+                            }}
+                            src={report.image_public_url}
+                        />
+                    ) : (
+                        ""
+                    )}
                     <div className="detail-meta">
                         <div className="meta-item">
                             <span className="meta-label">Reported by:</span>
@@ -208,23 +215,25 @@ e.preventDefault();
                 {Object.entries(comments).map(([key, value]) => (
                     <Comment comment={value} />
                 ))}
-                <div style={{display: "flex"}}>
-                        <textarea
-                            value={comment}
-                            onChange={(e)=>setComment(e.target.value)}
-                            style={{
-                                flex: 1, 
-                                padding: "0.625rem",
-                                border: "1px solid #d1d5db",
-                                "border-radius": "0.375rem",
-                                "font-size": "0.875rem",
-                                transition: "border-color 0.2s ease",
-                            }}
-                        ></textarea>
+                <div style={{ display: "flex" }}>
+                    <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        style={{
+                            flex: 1,
+                            padding: "0.625rem",
+                            border: "1px solid #d1d5db",
+                            "border-radius": "0.375rem",
+                            "font-size": "0.875rem",
+                            transition: "border-color 0.2s ease",
+                        }}
+                    ></textarea>
                 </div>
-                <div style={{display:"flex"}} className="detail-actions">
+                <div style={{ display: "flex" }} className="detail-actions">
                     <form onSubmit={handlePost}>
-                    <button type="submit" className="action-button comment-button">Send Comment</button>
+                        <button type="submit" className="action-button comment-button">
+                            Send Comment
+                        </button>
                     </form>
 
                     {/* {isAdmin ? (

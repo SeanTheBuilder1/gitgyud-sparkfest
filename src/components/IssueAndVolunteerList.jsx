@@ -81,6 +81,16 @@ export default function IssueAndVolunteerList({ reports, onReportClick, voluntee
                                             <span className={`report-status ${getStateClass(report.issue_state)}`}>
                                                 {getStateFormal(report.issue_state)}{" "}
                                             </span>
+                                            {report.sus ? (
+                                                <span className={`report-status status-closed`}>Suspicious</span>
+                                            ) : (
+                                                ""
+                                            )}
+                                            {report.volunteering ? (
+                                                <span className={`report-status status-resolved`}>Volunteering</span>
+                                            ) : (
+                                                ""
+                                            )}
                                         </div>
 
                                         <div className="report-content">

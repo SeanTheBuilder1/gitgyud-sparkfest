@@ -71,6 +71,11 @@ export default function IssueList({ reports, onReportClick, selected_id, setSele
                                     ) : (
                                         ""
                                     )}
+                                    {report.volunteering ? (
+                                        <span className={`report-status status-resolved`}>Volunteering</span>
+                                    ) : (
+                                        ""
+                                    )}
                                 </div>
 
                                 <div className="report-content">

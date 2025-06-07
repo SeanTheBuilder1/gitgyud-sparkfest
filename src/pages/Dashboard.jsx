@@ -3,7 +3,7 @@ import supabase from "../supabase-client";
 import { useRef, useState, createRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
-import IssueList from "../components/IssueList";
+import IssueAndVolunteerList from "../components/IssueAndVolunteerList";
 import IssuePreview from "../components/IssuePreview";
 import AuthPanel from "../components/AuthPanel";
 import PostPanel from "../components/PostPanel";
@@ -224,7 +224,7 @@ function Dashboard({ token, loadSupabaseUser }) {
                         }}
                     >
                         <FilterPanel filter={filter} setFilter={setFilter} />
-                        <IssueList
+                        <IssueAndVolunteerList
                             reports={data}
                             selected_id={selected_id}
                             setSelectedId={setSelectedId}

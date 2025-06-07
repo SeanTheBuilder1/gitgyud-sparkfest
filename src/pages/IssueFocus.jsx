@@ -5,8 +5,50 @@ import { Link, useNavigate, useParams } from "react-router";
 import Navbar from "../components/Navbar";
 import IssueFocusComp from "../components/IssueFocusComp";
 import ReCAPTCHA from "react-google-recaptcha";
+import { GoogleGenAI } from "@google/genai";
 const recaptchaRef = createRef();
 
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_KEY;
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
+function GeminiModel({ report_input, comment_input }) {
+    const [response, setResponse] = useState();
+    async function handleGemini() {
+        let prompt_data = "Issue Subject: "
+            .concat(report_input.issue_subject)
+            .concat("Issue Body: ")
+            .concat(report_input.issue_body)
+            .concat("Issue Author: ");
+        if (report_input?.users?.username) {
+            prompt_data = prompt_data.concat(report_input.users.username);
+        } else {
+            prompt_data = prompt_data.concat("Anonymous User");
+        }
+        let comment_prompt_data;
+        comment_input.map((comment) => {
+            comment_prompt_data = comment_prompt_data
+                .concat("Comment Author: ")
+                .concat(comment_input.users.username)
+                .concat("Comment Body: ")
+                .concat(comment_input.comment_text);
+        });
+
+        const response_gemini = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+        contents: "You are a moderator of an incident reporting program for public complaints in Quezon City, Philippines, rate this input by its suspiciousness by 0.00 to 1.00 and format your response with and with rationale {1.00}"
+                .concat(prompt_data)
+                .concat("Comments starts now")
+                .concat(comment_prompt_data),
+        });
+        setResponse(response_gemini);
+    }
+    return (
+        <div style={{"overflow-wrap": "break-word"}}>
+            <button onClick={handleGemini}>Click to unleash him</button>
+            <p>{response ? response.text : ""}</p>
+        </div>
+    );
+}
 function Comment({ comment }) {
     if (comment?.users?.username) {
         return (
@@ -70,33 +112,29 @@ export default function IssueFocus({ token }) {
     if (data && comment_data) {
         return (
             <div>
-
-            <Navbar token={token} activeTab={""} />
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(12, 1fr)",
-                    gap: "1.5rem",
-                }}
-            >
+                <Navbar token={token} activeTab={""} />
                 <div
-                
-                    style=
-                    {{
-                        "grid-column": "span 2",
-                        padding: "1rem",
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(12, 1fr)",
+                        gap: "1.5rem",
                     }}
                 >
+                    <div
+                        style={{
+                            "grid-column": "span 2",
+                            padding: "1rem",
+                        }}
+                    ></div>
+                    <GeminiModel report_input={data} comment_input={comment_data} />
+                    <IssueFocusComp report={data} comments={comment_data} issue_id={issue_id} />
+                    <div
+                        style={{
+                            "grid-column": "span 2",
+                            padding: "1rem",
+                        }}
+                    ></div>
                 </div>
-
-                <IssueFocusComp report={data} comments={comment_data} issue_id={issue_id}/>
-                <div                     style=
-                    {{
-                        "grid-column": "span 2",
-                        padding: "1rem",
-                    }}>
-                </div>
-            </div>
             </div>
         );
     }

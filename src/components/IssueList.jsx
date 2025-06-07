@@ -3,7 +3,7 @@ import "./issuelist.css";
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 
-export default function IssueList({ reports, onReportClick, selected_id, setSelectedId, list_label}) {
+export default function IssueList({ reports, onReportClick, selected_id, setSelectedId, list_label }) {
     const getStateClass = (status) => {
         switch (status) {
             case "open":
@@ -44,8 +44,9 @@ export default function IssueList({ reports, onReportClick, selected_id, setSele
             }}
         >
             <div className="reports-list">
-                <strong><h2>{list_label}</h2></strong>
-                
+                <strong>
+                    <h2>{list_label}</h2>
+                </strong>
 
                 {reports.length === 0 ? (
                     <div className="no-reports">No reports found</div>
@@ -65,6 +66,11 @@ export default function IssueList({ reports, onReportClick, selected_id, setSele
                                     <span className={`report-status ${getStateClass(report.issue_state)}`}>
                                         {getStateFormal(report.issue_state)}{" "}
                                     </span>
+                                    {report.sus ? (
+                                        <span className={`report-status status-closed`}>Suspicious</span>
+                                    ) : (
+                                        ""
+                                    )}
                                 </div>
 
                                 <div className="report-content">

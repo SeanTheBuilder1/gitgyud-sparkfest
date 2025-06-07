@@ -1,7 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { GoogleGenAI } from "@google/genai";
+import { createRef, useEffect, useRef, useState } from "react";
 import supabase from "../supabase-client";
-import ReCAPTCHA from "react-google-recaptcha";
 import "./authpanel.css";
+const recaptchaRef = createRef();
+
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_KEY;
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 function Selection({ items, item, setItem }) {}
 
@@ -22,6 +26,25 @@ export default function PostPanel({ open, onOpenChange, token }) {
         // apply to form data
     };
     async function formSubmit(e) {
+        async function GeminiModel(report_input) {
+            let prompt_data = "Issue Subject: "
+                .concat(report_input.issue_subject)
+                .concat("Issue Body: ")
+                .concat(report_input.issue_body)
+                .concat("Issue Author: ");
+
+            const response_gemini = await ai.models.generateContent({
+                model: "gemini-2.0-flash",
+                contents:
+                    "You are a moderator of an incident reporting program for public complaints in Quezon City, Philippines, rate this input by its suspiciousness or profanity (profanity scores more than suspiciousness) by 0.00 as least sus to 1.00 to the most sus and format your response like this and only like this {1.00} and then your rationale\\".concat(
+                        prompt_data,
+                    ),
+            });
+            const number = parseFloat(response_gemini.text.match(/-?\d+(\.\d+)?/)[0]);
+            console.log(response_gemini.text);
+            console.log(number);
+            return number > 0.8;
+        }
         e.preventDefault();
         const { data, error: user_error } = await supabase.auth.getUser();
         if (user_error) {
@@ -30,24 +53,34 @@ export default function PostPanel({ open, onOpenChange, token }) {
         }
         var full_path;
         var public_url;
+
+        const initial_data = {
+            issue_subject: subject,
+            issue_body: body,
+        };
+        const is_sus = await GeminiModel(initial_data);
+        if (is_sus) {
+            alert("Your entry has been flagged as suspicious, the moderators have been notified");
+        }
+        console.log(is_sus);
         if (files) {
             const avatarFile = files[0];
             const filename = crypto.randomUUID().concat(".jpg");
-            const { data: file_data, error: file_error } = await supabase.storage.from("commentimages").upload(filename, avatarFile, {
-                cacheControl: "3600",
-                upsert: false,
-            });
-            if(file_error){
+            const { data: file_data, error: file_error } = await supabase.storage
+                .from("commentimages")
+                .upload(filename, avatarFile, {
+                    cacheControl: "3600",
+                    upsert: false,
+                });
+            if (file_error) {
                 alert("Error uploading file\n", file_error);
                 return;
-            }
-            else{
-                full_path = file_data.path; 
-                const {data: url_data} = supabase.storage.from("commentimages").getPublicUrl(full_path);
-                if(url_data){
+            } else {
+                full_path = file_data.path;
+                const { data: url_data } = supabase.storage.from("commentimages").getPublicUrl(full_path);
+                if (url_data) {
                     public_url = url_data.publicUrl;
-                }
-                else{
+                } else {
                     alert("Unable to get public URL");
                     return;
                 }
@@ -65,6 +98,7 @@ export default function PostPanel({ open, onOpenChange, token }) {
                 user_id: anon ? null : data.user.id,
                 image_public_url: public_url,
                 image_full_path: full_path,
+                sus: is_sus,
             })
             .single();
         if (error) {

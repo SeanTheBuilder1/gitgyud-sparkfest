@@ -76,15 +76,10 @@ export default function IssueAndVolunteerList({ reports, onReportClick, voluntee
                                         <div className="report-header">
                                             <span className="report-number">{index + 1}</span>
                                             <Link to={"/issues/".concat(report.issue_id)}>
-                                                <h3 className="report-title subject-link">
-                                                    {report.issue_subject}
-                                                </h3>
+                                                <h3 className="report-title subject-link">{report.issue_subject}</h3>
                                             </Link>
-                                            <span
-                                                className={`report-status ${getStateClass(report.issue_state)}`}
-                                            >
+                                            <span className={`report-status ${getStateClass(report.issue_state)}`}>
                                                 {getStateFormal(report.issue_state)}{" "}
-                        
                                             </span>
                                         </div>
 
@@ -124,7 +119,7 @@ export default function IssueAndVolunteerList({ reports, onReportClick, voluntee
                             <h2>{activeTab ? "My Reports" : "Volunteering"}</h2>
                         </strong>
 
-                        {volunteers?.length !== 0 ? (
+                        {volunteers?.length === 0 ? (
                             <div className="reports-container">
                                 {reports.map((volunteer, index) => (
                                     <div
@@ -135,9 +130,13 @@ export default function IssueAndVolunteerList({ reports, onReportClick, voluntee
                                         <div className="report-header">
                                             <span className="report-number">{index + 1}</span>
                                             <Link to={"/issues/".concat(volunteer.issue.issue_id)}>
-                                                <h3 className="report-title subject-link">{volunteer.issue.issue_subject}</h3>
+                                                <h3 className="report-title subject-link">
+                                                    {volunteer.issue.issue_subject}
+                                                </h3>
                                             </Link>
-                                            <span className={`report-status ${getStateClass(volunteer.issue.issue_state)}`}>
+                                            <span
+                                                className={`report-status ${getStateClass(volunteer.issue.issue_state)}`}
+                                            >
                                                 {getStateFormal(volunteer.issue.issue_state)}{" "}
                                             </span>
                                         </div>

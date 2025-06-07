@@ -1,8 +1,11 @@
 import FilterPanel from "../components/FilterPanel";
 import Navbar from "../components/Navbar";
 import AuthPanel from "../components/AuthPanel";
-import "../App.css"
+import "../App.css";
 import { useState } from "react";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { APIProvider, Map, MapCameraChangedEvent } from "@vis.gl/react-google-maps";
 
 export default function ReportMap({ token, loadSupabaseUser }) {
     const [filter, setFilter] = useState({
@@ -29,50 +32,40 @@ export default function ReportMap({ token, loadSupabaseUser }) {
     const [auth_open, setAuthOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(true);
     return (
-<div>
-<gmp-map
-      center="43.4142989,-124.2301242"
-      zoom="4"
-      map-id="DEMO_MAP_ID"
-      style={{height: "400px"}}
-    >
-      <gmp-advanced-marker
-        position="37.4220656,-122.0840897"
-        title="Mountain View, CA"
-      ></gmp-advanced-marker>
-      <gmp-advanced-marker
-        position="47.648994,-122.3503845"
-        title="Seattle, WA"
-      ></gmp-advanced-marker>
-    </gmp-map>
-
-
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=KEY&libraries=maps,marker&v=beta"
-      defer
-    ></script>
-
-</div>
-
-       // <div>
-        //     <Navbar token={token} activeTab={"map"} setOpen={setAuthOpen} setIsLogin={setIsLogin} />
-        //     <div
-        //         style={{
-        //             display: "grid",
-        //             gridTemplateColumns: "repeat(12, 1fr)",
-        //             gap: "1.5rem",
-        //         }}
-        //     >
-        //         <FilterPanel filter={filter} setFilter={setFilter} />
-        //     </div>
-        //     {auth_open && (
-        //         <AuthPanel
-        //             open={auth_open}
-        //             onOpenChange={setAuthOpen}
-        //             isLogin={isLogin}
-        //             loadSupabaseUser={loadSupabaseUser}
-        //         />
-        //     )}
-        // </div>
+        <div>
+            <Navbar token={token} activeTab={"map"} setOpen={setAuthOpen} setIsLogin={setIsLogin} />
+            <div
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(12, 1fr)",
+                    gap: "1.5rem",
+                }}
+            >
+                <FilterPanel filter={filter} setFilter={setFilter} />
+                <div
+                    style={{
+                        "grid-column": "span 10",
+                        padding: "1rem",
+                    }}
+                >
+                    <Map
+                        style={{ width: "70vw", height: "70vh" }}
+                        defaultZoom={13}
+                        defaultCenter={{ lat: 14.6625, lng: 121.035 }}
+                        onCameraChanged={(ev) =>
+                            console.log("camera changed:", ev.detail.center, "zoom:", ev.detail.zoom)
+                        }
+                    ></Map>
+                </div>
+            </div>
+            {auth_open && (
+                <AuthPanel
+                    open={auth_open}
+                    onOpenChange={setAuthOpen}
+                    isLogin={isLogin}
+                    loadSupabaseUser={loadSupabaseUser}
+                />
+            )}
+        </div>
     );
 }

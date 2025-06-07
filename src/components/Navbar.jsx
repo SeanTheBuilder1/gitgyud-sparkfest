@@ -30,9 +30,6 @@ function Navbar({ token, activeTab, setOpen, setIsLogin }) {
                     <button onClick={() => navigate("/map")} className={activeTab === "map" ? "active" : ""}>
                         Report Map
                     </button>
-                    <button onClick={() => navigate("/profile")} className={activeTab === "account" ? "active" : ""}>
-                        Account
-                    </button>
                 </div>
 
                 {token ? (

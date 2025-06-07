@@ -4,7 +4,6 @@ import "./authpanel.css";
 import ReCAPTCHA from "react-google-recaptcha";
 
 export default function AuthPanel({ open, onOpenChange, isLogin, loadSupabaseUser }) {
-
     const recaptchaRef = useRef();
     const onSubmitWithReCAPTCHA = async () => {
         const token = await recaptchaRef.current.executeAsync();
@@ -185,7 +184,7 @@ export default function AuthPanel({ open, onOpenChange, isLogin, loadSupabaseUse
                                             id="username"
                                             type="name"
                                             className="form-input"
-                                            value={registerData.password}
+                                            value={registerData.username}
                                             onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
                                             required
                                         />
@@ -230,7 +229,11 @@ export default function AuthPanel({ open, onOpenChange, isLogin, loadSupabaseUse
                             </div>
                         </div>
 
-                        <ReCAPTCHA ref={recaptchaRef} size="invisible" sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} />
+                        <ReCAPTCHA
+                            ref={recaptchaRef}
+                            size="invisible"
+                            sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                        />
                         <div className="modal-footer">
                             <button className="button button-ghost" onClick={() => onOpenChange(false)}>
                                 Cancel

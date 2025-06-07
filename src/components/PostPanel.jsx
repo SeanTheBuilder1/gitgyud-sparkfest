@@ -290,6 +290,10 @@ export default function PostPanel({ open, onOpenChange, token }) {
                                     style={{ paddingBottom: "0.9rem", paddingTop: "0.0rem" }}
                                     className="button"
                                 ></input>
+                                <label htmlFor="data-privacy" className="form-label">
+                                    I understand and consent to the provision of my information.
+                                </label>
+                                <input type="checkbox"></input>
                                 <button type="submit" className="button button-primary button-full">
                                     Post
                                 </button>

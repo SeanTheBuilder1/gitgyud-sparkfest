@@ -35,15 +35,55 @@ function GeminiModel({ report_input, comment_input }) {
 
         const response_gemini = await ai.models.generateContent({
             model: "gemini-2.0-flash",
-        contents: "You are a moderator of an incident reporting program for public complaints in Quezon City, Philippines, rate this input by its suspiciousness by 0.00 to 1.00 and format your response with and with rationale {1.00}"
-                .concat(prompt_data)
-                .concat("Comments starts now")
-                .concat(comment_prompt_data),
+            contents:
+                "You are a moderator of an incident reporting program for public complaints in Quezon City, Philippines, rate this input by its suspiciousness by 0.00 to 1.00 and format your response with and with rationale {1.00}"
+                    .concat(prompt_data)
+                    .concat("Comments starts now")
+                    .concat(comment_prompt_data),
         });
         setResponse(response_gemini);
     }
     return (
-        <div style={{"overflow-wrap": "break-word"}}>
+        <div style={{ "overflow-wrap": "break-word" }}>
+            <button onClick={handleGemini}>Click to unleash him</button>
+            <p>{response ? response.text : ""}</p>
+        </div>
+    );
+}
+function GeminiModel2({ report_input, comment_input }) {
+    const [response, setResponse] = useState();
+    async function handleGemini() {
+        let prompt_data = "Issue Subject: "
+            .concat(report_input.issue_subject)
+            .concat("Issue Body: ")
+            .concat(report_input.issue_body)
+            .concat("Issue Author: ");
+        if (report_input?.users?.username) {
+            prompt_data = prompt_data.concat(report_input.users.username);
+        } else {
+            prompt_data = prompt_data.concat("Anonymous User");
+        }
+        let comment_prompt_data;
+        comment_input.map((comment) => {
+            comment_prompt_data = comment_prompt_data
+                .concat("Comment Author: ")
+                .concat(comment_input.users.username)
+                .concat("Comment Body: ")
+                .concat(comment_input.comment_text);
+        });
+
+        const response_gemini = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents:
+                "You are a summarizer of an incident reporting program for public complaints in Quezon City, Philippines, summarize this report: "
+                    .concat(prompt_data)
+                    .concat("Comments starts now")
+                    .concat(comment_prompt_data),
+        });
+        setResponse(response_gemini);
+    }
+    return (
+        <div style={{ "overflow-wrap": "break-word" }}>
             <button onClick={handleGemini}>Click to unleash him</button>
             <p>{response ? response.text : ""}</p>
         </div>
@@ -128,6 +168,7 @@ export default function IssueFocus({ token }) {
                     ></div>
                     <GeminiModel report_input={data} comment_input={comment_data} />
                     <IssueFocusComp report={data} comments={comment_data} issue_id={issue_id} />
+                    <GeminiModel2 report_input={data} comment_input={comment_data} />
                     <div
                         style={{
                             "grid-column": "span 2",
